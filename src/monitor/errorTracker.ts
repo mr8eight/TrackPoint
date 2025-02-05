@@ -39,6 +39,9 @@ window.onerror = (msg, url, line, column, error) => {
     if(!target) return;
       lazyReport("资源加载错误",{
         subType: 'resource',
+        stack:target.stack,
+        pageURL:window.location.href,
+        msg:target.message
       })
     
     })
