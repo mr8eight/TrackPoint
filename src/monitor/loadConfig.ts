@@ -1,6 +1,7 @@
 import { autoTrackerReport } from './actionTracker';
 import { hashPageTrackerReport, historyPageTrackerReport } from './pageTracker';
 import { errorTrackerReport } from './errorTracker';
+import { blankScreen } from './blankScreenTracker';
 
 // 定义配置选项的接口
 interface ConfigOptions {
@@ -11,6 +12,7 @@ interface ConfigOptions {
   delay?: number; // 延迟和合并上报的功能
   hashPage?: boolean; // 是否hash录有
   errorReport?: boolean; // 是否开启错误监控
+  blankReport?: boolean; // 是否开启空白页面监控
 }
 
 /**
@@ -25,7 +27,9 @@ export function loadConfig(options: ConfigOptions) {
     autoTracker, // 自动埋点
     delay, // 延迟和合并上报的功能
     hashPage, // 是否hash录有
-    errorReport // 是否开启错误监控
+    errorReport, // 是否开启错误监控
+    blankReport // 是否开启空白页面监控
+
   } = options;
 
   // --------- appId ----------------
@@ -63,6 +67,9 @@ export function loadConfig(options: ConfigOptions) {
     hashPageTrackerReport(); // hash路由上报
   } else {
     historyPageTrackerReport(); // history路由上报
+  }
+  if (blankReport) {
+    blankScreen(); // 空白页面监控
   }
 }
 
