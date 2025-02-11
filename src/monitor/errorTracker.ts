@@ -3,7 +3,7 @@ import { lazyReport } from './report';
 /**
  * 全局错误捕获
  */
-export default function errorTrackerReport() : void {
+export function errorTrackerReport() : void {
   // --------  js error ---------
  // 监听 js 错误
 window.onerror = (msg, url, line, column, error) => {
@@ -36,15 +36,29 @@ window.onerror = (msg, url, line, column, error) => {
   // ------- resource error --------
   window.addEventListener('error', (event) => {
     const target = event.target;
-    if(!target) return;
-      lazyReport("资源加载错误",{
-        subType: 'resource',
-        stack:target.stack,
-        pageURL:window.location.href,
-        msg:target.message
-      })
-    
-    })
+    // 过滤掉非资源加载错误（因为 window 上的 error 事件也会捕获 JS 错误，这里只处理资源加载错误）
+    if (!(target instanceof HTMLScriptElement || target instanceof HTMLImageElement || target instanceof HTMLLinkElement)) {
+      return;
+    }
+    let resourceType;
+    let resourceUrl;
+    if (target instanceof HTMLScriptElement) {
+      resourceType = 'script';
+      resourceUrl = target.src;
+    } else if (target instanceof HTMLImageElement) {
+      resourceType = 'image';
+      resourceUrl = target.src;
+    } else if (target instanceof HTMLLinkElement) {
+      resourceType = 'stylesheet';
+      resourceUrl = target.href;
+    }
+    lazyReport("资源加载错误", {
+      subType: 'resource',
+      resourceType,
+      resourceUrl,
+      pageURL: window.location.href,
+    });
+  });
 
 }
 
