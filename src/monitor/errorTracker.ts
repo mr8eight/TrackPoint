@@ -8,9 +8,9 @@ export function errorTrackerReport() : void {
  // 监听 js 错误
 window.onerror = (msg, url, line, column, error) => {
   lazyReport("js错误",{
-      msg,
-      line,
-      column,
+      message: msg,
+      row: line,
+      column: column,
       subType: 'js错误',
       pageURL: url,
   })
@@ -54,8 +54,8 @@ window.onerror = (msg, url, line, column, error) => {
     }
     lazyReport("资源加载错误", {
       subType: 'resource',
-      resourceType,
-      resourceUrl,
+      resourceType: resourceType,
+      resourceUrl: resourceUrl,
       pageURL: window.location.href,
     });
   });
@@ -69,7 +69,7 @@ window.onerror = (msg, url, line, column, error) => {
 export function errorCatcher(error : Error , msg : string ) {
   lazyReport("手动捕获错误",{
     error: error.stack,
-    msg,
+    message: msg,
     subType: 'manual',
     pageURL: window.location.href,
   })

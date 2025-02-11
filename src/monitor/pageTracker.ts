@@ -36,7 +36,7 @@ export function historyPageTrackerReport(): void {
     lazyReport("historyPage", {
       pageURL: window.location.href,
       event: "popstate",
-      dwellTime
+      dwellTime: dwellTime
     });
   });
 
@@ -50,7 +50,7 @@ export function historyPageTrackerReport(): void {
     lazyReport("historyPage", {
       pageURL: window.location.href,
       event: "pushState",
-      dwellTime
+      dwellTime: dwellTime
     });
   };
 
@@ -64,7 +64,7 @@ export function historyPageTrackerReport(): void {
     lazyReport("historyPage", {
       pageURL: window.location.href,
       event: "replaceState",
-      dwellTime
+      dwellTime: dwellTime
     });
   };
 }
