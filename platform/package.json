@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@ant-design/icons": "^5.6.1",
     "antd": "^5.23.3",
     "cra-template": "1.2.0",
     "customize-cra": "^1.0.0",
@@ -12,7 +13,8 @@
     "react-dom": "^18.3.1",
     "react-router-dom": "^7.1.5",
     "react-scripts": "5.0.1",
-    "sass": "^1.84.0"
+    "sass": "^1.84.0",
+    "zustand": "^5.0.3"
   },
   "scripts": {
     "start": "react-app-rewired start",
