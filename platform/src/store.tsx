@@ -1,16 +1,9 @@
 import { create } from "zustand";
 
-type State = {
-  headerMenuCur: string;
-};
+type State = {};
 
-type Action = {
-  setHeaderMenuCur: (cur: State["headerMenuCur"]) => void;
-};
+type Action = {};
 
-const useStore = create<State & Action>((set) => ({
-  headerMenuCur: "",
-  setHeaderMenuCur: (cur) => set(() => ({ headerMenuCur: cur })),
-}));
+const useStore = create<State & Action>((set) => ({}));
 
 export default useStore;

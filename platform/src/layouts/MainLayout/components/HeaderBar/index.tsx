@@ -1,59 +1,93 @@
 import { Layout, Typography, Menu } from "antd";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import styles from "./index.module.scss";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { MenuItem } from "@/types";
-import useStore from "@/store";
 
 const { Header } = Layout;
 const { Title } = Typography;
 
+const eventPath = "/action/event";
+const retentionPath = "/action/retention";
+const performancePath = "/performance";
+const exceptionPath = "/exception";
+
+type MenuKey =
+  | "action"
+  | "event"
+  | "retention"
+  | "performance"
+  | "exception"
+  | "";
+
+const map: Record<string, MenuKey> = {
+  [eventPath]: "event",
+  [retentionPath]: "retention",
+  [performancePath]: "performance",
+  [exceptionPath]: "exception",
+};
+
 const items: MenuItem[] = [
   {
-    label: "行为监控",
     key: "action",
+    label: "行为监控",
     children: [
-      { key: "event", label: <Link to="/action/event">事件分析</Link> },
-      { key: "retention", label: <Link to="/action/retention">留存分析</Link> },
+      { key: map[eventPath], label: <Link to={eventPath}>事件分析</Link> },
+      {
+        key: map[retentionPath],
+        label: <Link to={retentionPath}>留存分析</Link>,
+      },
     ],
   },
   {
-    label: <Link to="/performance">性能监控</Link>,
-    key: "performance",
+    key: map[performancePath],
+    label: <Link to={performancePath}>性能监控</Link>,
   },
-  {
-    label: <Link to="/exception">异常监控</Link>,
-    key: "exception",
-  },
+  { key: map[exceptionPath], label: <Link to={exceptionPath}>异常监控</Link> },
 ];
 
 const HeaderBar: React.FC = () => {
-  const headerMenuCur = useStore((state) => state.headerMenuCur);
-  const setHeaderMenuCur = useStore((state) => state.setHeaderMenuCur);
+  const [current, setCurrent] = useState<MenuKey>("");
+  const location = useLocation();
+
+  useEffect(() => {
+    const pathName = location.pathname;
+    switch (pathName) {
+      case eventPath: {
+        setCurrent(map[eventPath]);
+        break;
+      }
+      case retentionPath: {
+        setCurrent(map[retentionPath]);
+        break;
+      }
+      case performancePath: {
+        setCurrent(map[performancePath]);
+        break;
+      }
+      case exceptionPath: {
+        setCurrent(map[exceptionPath]);
+        break;
+      }
+      default: {
+        setCurrent("");
+      }
+    }
+  }, [location.pathname]);
 
   return (
     <Header className={styles["header"]}>
-      <Link
-        className={styles["logo"]}
-        to="/"
-        onClick={() => {
-          setHeaderMenuCur("");
-        }}
-      >
+      <Link className={styles["logo"]} to="/">
         <img className={styles["logo-image"]} src="/favicon.ico" alt="logo" />
         <Title level={3} style={{ marginBottom: 0 }}>
           TrackPoint
         </Title>
       </Link>
       <Menu
-        selectedKeys={[headerMenuCur]}
+        selectedKeys={[current]}
         mode="horizontal"
         items={items}
         style={{ marginLeft: "4em" }}
-        onClick={(e) => {
-          console.log(e.key);
-          setHeaderMenuCur(e.key);
-        }}
       />
     </Header>
   );
