@@ -1,10 +1,13 @@
+@use "src/index";
+
 .header {
   display: flex;
-  border-bottom: 1px solid rgba(0, 21, 64, 0.16);
+  border-bottom: index.$border-config;
   z-index: 2;
   position: sticky;
   top: 0;
 }
+
 .logo {
   display: flex;
   align-items: center;
@@ -12,4 +15,10 @@
     width: 4.35em;
     padding: 0.75em;
   }
+}
+
+.footer {
+  text-align: center;
+  border-top: index.$border-config;
+  z-index: 2;
 }

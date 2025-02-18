@@ -1,6 +1,6 @@
 import { Layout, Typography, Menu } from "antd";
 import { Link, useLocation } from "react-router-dom";
-import styles from "./index.module.scss";
+import styles from "../index.module.scss";
 import { useEffect, useState } from "react";
 import { MenuItem } from "@/types";
 
