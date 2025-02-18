@@ -1,0 +1,17 @@
+@use "src/index";
+
+.wrapper {
+  border: index.$border-config;
+  border-radius: 0.5em;
+  .titleBar {
+    border-bottom: index.$border-config;
+    padding: 0.5em 1em;
+  }
+  .paragraph {
+    border-bottom: index.$border-config;
+    padding: 0.75em 0;
+  }
+  .paragraph:last-child {
+    border-bottom: none;
+  }
+}
