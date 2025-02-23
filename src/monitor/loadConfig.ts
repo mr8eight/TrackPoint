@@ -2,6 +2,8 @@ import { autoTrackerReport } from './actionTracker';
 import { hashPageTrackerReport, historyPageTrackerReport } from './pageTracker';
 import { errorTrackerReport } from './errorTracker';
 import { blankScreen } from './blankScreenTracker';
+import { pvTracker } from './pvTracker';
+import { uvTracker } from './uvTracker';
 
 // 定义配置选项的接口
 interface ConfigOptions {
@@ -13,6 +15,8 @@ interface ConfigOptions {
   hashPage?: boolean; // 是否hash录有
   errorReport?: boolean; // 是否开启错误监控
   blankReport?: boolean; // 是否开启空白页面监控
+  pvReport?: boolean; //是否开启pv监测
+  uvReport?: boolean;//是否开启uv监测
 }
 
 /**
@@ -28,7 +32,9 @@ export function loadConfig(options: ConfigOptions) {
     delay, // 延迟和合并上报的功能
     hashPage, // 是否hash录有
     errorReport, // 是否开启错误监控
-    blankReport // 是否开启空白页面监控
+    blankReport, // 是否开启空白页面监控
+    pvReport, //是否开启pv监测
+    uvReport //是否开启uv监测
 
   } = options;
 
@@ -68,9 +74,19 @@ export function loadConfig(options: ConfigOptions) {
   } else {
     historyPageTrackerReport(); // history路由上报
   }
+
   if (blankReport) {
     blankScreen(); // 空白页面监控
   }
+
+  if(pvReport){
+    pvTracker();//pv监测
+  }
+
+  if(uvReport){
+    uvTracker();//uv监测
+  }
+
 }
 
 /**
