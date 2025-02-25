@@ -1,13 +1,16 @@
+import React from "react";
 import { List, Space, Typography } from "antd";
 import type { BasePanelProps } from "@/commons/Panel";
 
 const { Title } = Typography;
 
-const BasePanel: React.FC<BasePanelProps> = ({
-  headerIcon,
-  headerText,
-  items,
-}) => {
+const Item: React.FC<React.ComponentProps<typeof List.Item>> = (props) => (
+  <List.Item {...props} />
+);
+
+const BasePanel: React.FC<BasePanelProps> & {
+  Item: typeof Item;
+} = ({ headerIcon, headerText, items, children }) => {
   return (
     <List
       header={
@@ -20,11 +23,13 @@ const BasePanel: React.FC<BasePanelProps> = ({
       }
       bordered
     >
-      {items.map((item, index) => (
-        <List.Item key={index}>{item}</List.Item>
-      ))}
+      {items
+        ? items.map((item, index) => <List.Item key={index}>{item}</List.Item>)
+        : children}
     </List>
   );
 };
+
+BasePanel.Item = Item;
 
 export default BasePanel;

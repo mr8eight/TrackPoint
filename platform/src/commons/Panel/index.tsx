@@ -1,10 +1,20 @@
-import { ReactNode } from "react";
 import BasePanel from "./BasePanel";
 
-export type BasePanelProps = {
-  headerIcon?: ReactNode;
+interface BasePanelCommonProps {
+  headerIcon?: React.ReactNode;
   headerText: string;
-  items: ReactNode[];
-};
+}
+
+interface BasePanelItemsProps extends BasePanelCommonProps {
+  items: React.ReactNode[];
+  children?: never;
+}
+
+interface BasePanelChildrenProps extends BasePanelCommonProps {
+  items?: never;
+  children: React.ReactNode;
+}
+
+export type BasePanelProps = BasePanelItemsProps | BasePanelChildrenProps;
 
 export { BasePanel };

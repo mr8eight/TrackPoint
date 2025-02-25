@@ -1,4 +1,4 @@
-import { Layout } from "antd";
+import { Layout, Flex } from "antd";
 import { HeaderBar, FooterBar } from "./components";
 import { Outlet } from "react-router-dom";
 
@@ -8,8 +8,10 @@ const MainLayout: React.FC = () => {
   return (
     <Layout style={{ minHeight: "100vh" }}>
       <HeaderBar />
-      <Content style={{ padding: "2.5em 5em" }}>
-        <Outlet />
+      <Content style={{ padding: "2.5em 12.5em" }}>
+        <Flex vertical gap="1em">
+          <Outlet />
+        </Flex>
       </Content>
       <FooterBar />
     </Layout>

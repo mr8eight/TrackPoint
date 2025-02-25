@@ -9,7 +9,13 @@ interface PerformanceBarProps {
   max: number;
 }
 
-const PerformanceBar: React.FC<PerformanceBarProps> = ({ title, data, markLineValue, markLineLabel, max }) => {
+const PerformanceBar: React.FC<PerformanceBarProps> = ({
+  title,
+  data,
+  markLineValue,
+  markLineLabel,
+  max,
+}) => {
   const colors = ["#4CAF50", "#FFC107", "#F44336"];
 
   const cumulativeData = data.reduce((acc, cur, index) => {
@@ -25,10 +31,10 @@ const PerformanceBar: React.FC<PerformanceBarProps> = ({ title, data, markLineVa
     },
     xAxis: {
       type: "value",
-      max: max, 
+      max: max,
       splitLine: { show: false },
       axisLabel: {
-        formatter: (value: number) => (value === 0 ? "0" : ""), 
+        formatter: (value: number) => (value === 0 ? "0" : ""),
         color: "#000",
       },
     },
@@ -52,7 +58,7 @@ const PerformanceBar: React.FC<PerformanceBarProps> = ({ title, data, markLineVa
         markLine: {
           silent: true,
           symbol: ["none", "triangle"],
-          symbolRotate: 180, 
+          symbolRotate: 180,
           symbolOffset: [0, -0.6],
           symbolSize: 8,
           label: { show: true, formatter: markLineLabel },
@@ -60,11 +66,13 @@ const PerformanceBar: React.FC<PerformanceBarProps> = ({ title, data, markLineVa
           // emphasis: { disabled: true },
           data: [{ xAxis: markLineValue }],
         },
-      }
+      },
     ],
   };
 
-  return <ReactECharts option={option} style={{ height: 150 }} />;
+  return (
+    <ReactECharts option={option} style={{ width: "100%", height: 150 }} />
+  );
 };
 
 export default PerformanceBar;

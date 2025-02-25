@@ -37,21 +37,25 @@ const DateFilter: React.FC<DateFilterProps> = ({
   };
   const onDateChange = (date: Dayjs) => {
     setCurrent(date);
-    switch (type) {
-      case "date": {
-        onChange({
-          showType: "hour",
-          selectTime: date?.format("YYYY-MM-DD"),
-        });
-        break;
+    if (date) {
+      switch (type) {
+        case "date": {
+          onChange({
+            showType: "hour",
+            selectTime: date.format("YYYY-MM-DD"),
+          });
+          break;
+        }
+        case "month": {
+          onChange({
+            showType: "day",
+            selectTime: date.format("YYYY-MM"),
+          });
+          break;
+        }
       }
-      case "month": {
-        onChange({
-          showType: "day",
-          selectTime: date?.format("YYYY-MM"),
-        });
-        break;
-      }
+    } else {
+      onChange(undefined);
     }
   };
 

@@ -20,7 +20,7 @@ const PanelFilter: React.FC<PanelFilterProps> = ({ items, onSubmit }) => {
       </Col>
       {button ? (
         <>
-          <Col span={12}>
+          <Col span={12} push={1}>
             {React.cloneElement(
               item,
               Object.assign({}, item.props, {
@@ -31,7 +31,7 @@ const PanelFilter: React.FC<PanelFilterProps> = ({ items, onSubmit }) => {
               })
             )}
           </Col>
-          <Col span={6}>
+          <Col span={6} push={1}>
             {button.type === "submit"
               ? React.cloneElement(
                   button.item,
@@ -43,7 +43,7 @@ const PanelFilter: React.FC<PanelFilterProps> = ({ items, onSubmit }) => {
           </Col>
         </>
       ) : (
-        <Col span={18}>
+        <Col span={18} push={1}>
           {React.cloneElement(
             item,
             Object.assign({}, item.props, {

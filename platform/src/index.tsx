@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import "./_index.scss";
+import "./global.scss";
 import { BrowserRouter } from "react-router-dom";
 import Routes from "./routes";
 import { ConfigProvider } from "antd";

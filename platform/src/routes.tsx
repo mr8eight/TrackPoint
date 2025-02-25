@@ -35,7 +35,7 @@ const routes: RouteObject[] = [
         element: <Performance />,
       },
       {
-        path: "/Exception",
+        path: "/exception",
         element: <Exception />,
       },
     ],

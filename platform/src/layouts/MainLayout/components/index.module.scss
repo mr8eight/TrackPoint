@@ -1,8 +1,8 @@
-@use "src/index";
+@use "src/global";
 
 .header {
   display: flex;
-  border-bottom: index.$border-config;
+  border-bottom: global.$border-config;
   z-index: 2;
   position: sticky;
   top: 0;
@@ -19,6 +19,6 @@
 
 .footer {
   text-align: center;
-  border-top: index.$border-config;
+  border-top: global.$border-config;
   z-index: 2;
 }
