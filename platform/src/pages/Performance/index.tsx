@@ -228,7 +228,7 @@ const PerformanceDashboard: React.FC = () => {
                 <BasePanel.Item>
                   <PerformanceBar
                     title="布局偏移量 (CLS)"
-                    data={[0.1, 0.25, 1]}
+                    data={[0.1, 0.15, 0.75]}
                     markLineValue={avgValues.CLS}
                     markLineLabel={`${avgValues.CLS.toFixed(2)}`}
                     max={1}
