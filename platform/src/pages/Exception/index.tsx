@@ -1,4 +1,4 @@
-import { Button, Input, Select, Table, Space, Row, Col } from 'antd';
+import { Button, Input, Select, Table, Space, Row, Col, message } from 'antd';
 import type { TableProps } from 'antd';
 import { useState } from 'react';
 
@@ -16,7 +16,9 @@ const AlertButton = ({ record }: { record: DataType }) => {
       method: 'POST',
       body: JSON.stringify({ errorKey: record.key })
     }).then(() => {
-      alert('报警通知已发送');
+      message.success('报警通知已发送');
+    }).catch(() => {
+      message.error('报警通知发送失败');
     });
   };
 
@@ -24,6 +26,11 @@ const AlertButton = ({ record }: { record: DataType }) => {
 };
 
 const columns: TableProps<DataType>["columns"] = [
+  {
+    title: 'URL',
+    dataIndex: 'url',
+    key: 'url',
+  },
   {
     title: 'Type',
     dataIndex: 'type',
@@ -46,7 +53,6 @@ const columns: TableProps<DataType>["columns"] = [
   },
 ];
 
-// 添加几个初始数据项
 const initialData: DataType[] = [
   { key: '1', url: 'http://example.com', type: 'JS Error', time: '2025-02-23 10:00:00', message: 'Uncaught TypeError in app.js' },
   { key: '2', url: 'http://example.com', type: 'API Error', time: '2025-02-23 10:05:00', message: '500 Internal Server Error' },
@@ -58,7 +64,7 @@ const Exception = () => {
   const [typeFilter, setTypeFilter] = useState('');
   const [data, setData] = useState<DataType[]>(initialData);
 
-  const debouncedFetch = debounce(async (params: any) => {
+  const fetchErrors = async (params: any) => {
     try {
       const response = await fetch('/api/get-errors', {
         method: 'POST',
@@ -67,23 +73,25 @@ const Exception = () => {
       });
       const result = await response.json();
       setData(result);
+      message.success('查询成功！');
     } catch (error) {
       console.error('Error fetching data:', error);
     }
-  }, 300);
-
+  };
+  
   const handleUrlChange = debounce((value: string) => {
     setUrlFilter(value);
-    debouncedFetch({ url: value, type: typeFilter });
-  }, 300);
-
+    fetchErrors({ url: value, type: typeFilter });
+  }, 700);
+  
   const handleTypeChange = debounce((value: string) => {
     setTypeFilter(value);
-    debouncedFetch({ url: urlFilter, type: value });
-  }, 300);
+    fetchErrors({ url: urlFilter, type: value });
+  }, 700);
 
   return (
     <>
+      <h1>异常分析</h1>
       <Row gutter={16} style={{ marginBottom: 16 }}>
         <Col span={8}>
           <Input
@@ -113,6 +121,7 @@ const Exception = () => {
         rowKey="key"
         bordered
         scroll={{ x: true }}
+        locale={{ emptyText: '暂无数据' }}
       />
     </>
   );
