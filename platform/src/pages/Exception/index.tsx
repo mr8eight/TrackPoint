@@ -1,6 +1,6 @@
 import { Button, Input, Select, Table, Space, Row, Col } from 'antd';
 import type { TableProps } from 'antd';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 interface DataType {
   key: string;
@@ -72,13 +72,15 @@ const Exception = () => {
     }
   }, 300);
 
-  useEffect(() => {
-    const filters: any = {};
-    if (urlFilter) filters.url = urlFilter;
-    if (typeFilter) filters.type = typeFilter;
-    
-    debouncedFetch(filters);
-  }, [urlFilter, typeFilter]);
+  const handleUrlChange = debounce((value: string) => {
+    setUrlFilter(value);
+    debouncedFetch({ url: value, type: typeFilter });
+  }, 300);
+
+  const handleTypeChange = debounce((value: string) => {
+    setTypeFilter(value);
+    debouncedFetch({ url: urlFilter, type: value });
+  }, 300);
 
   return (
     <>
@@ -87,7 +89,7 @@ const Exception = () => {
           <Input
             placeholder="Filter by URL"
             allowClear
-            onChange={(e) => setUrlFilter(e.target.value)}
+            onChange={(e) => handleUrlChange(e.target.value)}
           />
         </Col>
         <Col span={8}>
@@ -95,7 +97,7 @@ const Exception = () => {
             placeholder="Filter by Type"
             allowClear
             style={{ width: '100%' }}
-            onChange={setTypeFilter}
+            onChange={(value) => handleTypeChange(value)}
             options={[
               { value: 'JS Error', label: 'JS Error' },
               { value: 'API Error', label: 'API Error' },
