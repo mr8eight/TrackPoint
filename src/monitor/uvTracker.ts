@@ -1,29 +1,38 @@
 import { lazyReport } from './report';
 
-/**
- * 初始化 UV 统计
- */
+const VISITED_KEY = '_your_app_visited_';
+
 export function uvTracker() {
-    const trackUV = () => {
-        let isNewVisitor = true;
-        try {
-            // 从 localStorage 中获取是否已访问的标记
-            isNewVisitor =!localStorage.getItem('visited');
-            if (isNewVisitor) {
-                // 若为新访客，设置标记为已访问
-                localStorage.setItem('visited', 'true');
-            }
+  const trackUV = () => {
+    let isNewVisitor = true;
 
-            lazyReport('UV', { 
-                type: 'uv', 
-                Visitor: isNewVisitor 
-            });
-
-        } catch (storageError) {
-            console.error('使用 localStorage 时出错:', storageError);
+    // 优先使用 _user_id_ 判断
+    if (window._user_id_) {
+      isNewVisitor = false;
+    } else {
+      // 如果 _user_id_ 不存在，降级到 localStorage
+      try {
+        isNewVisitor = !localStorage.getItem(VISITED_KEY);
+        if (isNewVisitor) {
+          localStorage.setItem(VISITED_KEY, 'true');
         }
-    };
+      } catch (error) {
+        console.error('访问 localStorage 失败:', error);
+      }
+    }
 
-    // 页面加载时进行 UV 统计
-    window.addEventListener('load', trackUV);
+    // 上报 UV 数据
+    lazyReport('UV', { 
+      type: 'uv', 
+      newVisitor: isNewVisitor 
+    });
+  };
+
+  // 页面加载时进行 UV 统计
+  if (document.readyState === 'complete') {
+    trackUV();
+  } else {
+    window.addEventListener('DOMContentLoaded', trackUV);
+  }
 }
+

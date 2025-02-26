@@ -1,6 +1,6 @@
 import { getCache, addCache, clearCache } from './cache';
 
-let timer: number | undefined;
+let timer: ReturnType<typeof setTimeout> | undefined;
 
 interface ReportParams {
     [key: string]: any;

@@ -6,17 +6,17 @@ import { pvTracker } from './pvTracker';
 import { uvTracker } from './uvTracker';
 
 // 定义配置选项的接口
-interface ConfigOptions {
+export interface ConfigOptions {
   appId?: string; // 系统id
   userId?: string; // 用户id
-  reportUrl?: string; // 后端url
-  autoTracker?: boolean; // 自动埋点
-  delay?: number; // 延迟和合并上报的功能
-  hashPage?: boolean; // 是否hash录有
-  errorReport?: boolean; // 是否开启错误监控
-  blankReport?: boolean; // 是否开启空白页面监控
-  pvReport?: boolean; //是否开启pv监测
-  uvReport?: boolean;//是否开启uv监测
+  reportUrl: string; // 后端url
+  autoTracker: boolean; // 自动埋点
+  delay: number; // 延迟和合并上报的功能
+  hashPage: boolean; // 是否hash录有
+  errorReport: boolean; // 是否开启错误监控
+  blankReport: boolean; // 是否开启空白页面监控
+  pvReport: boolean; //是否开启pv监测
+  uvReport: boolean;//是否开启uv监测
 }
 
 /**
