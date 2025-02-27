@@ -1,6 +1,8 @@
-import { Button, Input, Select, Table, Space, Row, Col, message } from 'antd';
+import { Button, Input, Select, Table, Row, Col, message } from 'antd';
 import type { TableProps } from 'antd';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import axios from 'axios';
+import MockAdapter from 'axios-mock-adapter';
 
 interface DataType {
   key: string;
@@ -12,14 +14,13 @@ interface DataType {
 
 const AlertButton = ({ record }: { record: DataType }) => {
   const handleAlert = () => {
-    fetch('/api/send-alert', {
-      method: 'POST',
-      body: JSON.stringify({ errorKey: record.key })
-    }).then(() => {
-      message.success('报警通知已发送');
-    }).catch(() => {
-      message.error('报警通知发送失败');
-    });
+    axios.post('/api/send-alert', { errorKey: record.key })
+      .then(() => {
+        message.success('报警通知已发送');
+      })
+      .catch(() => {
+        message.error('报警通知发送失败');
+      });
   };
 
   return <Button onClick={handleAlert}>报警</Button>;
@@ -64,30 +65,54 @@ const Exception = () => {
   const [typeFilter, setTypeFilter] = useState('');
   const [data, setData] = useState<DataType[]>(initialData);
 
+  useEffect(() => {
+    // 创建 axios-mock-adapter 实例并设置延时（可选）
+    const mock = new MockAdapter(axios, { delayResponse: 300 });
+
+    // 模拟 /api/get-errors 接口
+    mock.onPost('/api/get-errors').reply(config => {
+      const params = JSON.parse(config.data);
+      return [
+        200,
+        {
+          body: initialData.filter(item =>
+            (!params.url || item.url.includes(params.url)) &&
+            (!params.type || item.type === params.type)
+          )
+        }
+      ];
+    });
+
+    // 模拟 /api/send-alert 接口
+    mock.onPost('/api/send-alert').reply(200);
+
+    return () => {
+      mock.restore();
+    };
+  }, []);
+
   const fetchErrors = async (params: any) => {
     try {
-      const response = await fetch('/api/get-errors', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(params)
+      const { data } = await axios.post('/api/get-errors', params, {
+        headers: { 'Content-Type': 'application/json' }
       });
-      const result = await response.json();
-      setData(result);
+      setData(data.body);
       message.success('查询成功！');
     } catch (error) {
       console.error('Error fetching data:', error);
+      message.error('查询失败，请稍后重试');
     }
   };
   
   const handleUrlChange = debounce((value: string) => {
     setUrlFilter(value);
     fetchErrors({ url: value, type: typeFilter });
-  }, 700);
+  }, 500);
   
   const handleTypeChange = debounce((value: string) => {
     setTypeFilter(value);
     fetchErrors({ url: urlFilter, type: value });
-  }, 700);
+  }, 500);
 
   return (
     <>
