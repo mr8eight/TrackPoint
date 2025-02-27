@@ -12,6 +12,7 @@ import { BasePanel } from "@/commons/Panel";
 import axios from "axios";
 import MockAdapter from "axios-mock-adapter";
 import ReactECharts from "echarts-for-react";
+import { getChartTimeArr, getChartTimeLength } from "@/commons/function";
 
 const { Text } = Typography;
 
@@ -22,11 +23,15 @@ const actionOptions = [
     children: [
       {
         label: "点击注册按钮",
-        value: "clickRegisterButton",
+        value: "点击注册按钮",
       },
       {
         label: "点击登录按钮",
-        value: "clickLoginButton",
+        value: "点击登录按钮",
+      },
+      {
+        label: "浏览主页面",
+        value: "浏览主页面",
       },
     ],
   },
@@ -99,43 +104,53 @@ const ActionEvent: React.FC = () => {
         content: "查询成功！",
       });
       const mock = new MockAdapter(axios);
-      mock.onPost("/api/actionEvent").reply(200, {
-        hours: new Array(24)
-          .fill(0)
-          .map((_, index) => index.toString().padStart(2, "0").concat(":00")),
-        numbers: new Array(24)
-          .fill(0)
-          .map(() => Math.ceil(Math.random() * 1000)),
+      mock.onPost("/api/actionEvent").reply((config) => {
+        const { date, actions } = JSON.parse(config.data);
+        const timeLen = getChartTimeLength(date);
+
+        return [
+          200,
+          {
+            actions: actions.map((action) => ({
+              label: action[action.length - 1],
+              data: new Array(timeLen)
+                .fill(0)
+                .map(() => Math.ceil(Math.random() * 1000)),
+            })),
+          },
+        ];
       });
       axios.post("/api/actionEvent", values).then((res) => {
-        const { hours, numbers } = res.data;
+        let timeArr = getChartTimeArr(values.date);
+
+        const { actions } = res.data;
+
         setOption({
           title: {
-            text: "基础折线图",
+            text: `${values.date.startTime} ~ ${values.date.endTime}`,
+            right: "right",
+          },
+          legend: {
+            data: actions.map(({ label }) => label),
           },
           tooltip: {
             trigger: "axis",
-          },
-          legend: {
-            data: ["发生次数"],
           },
           xAxis: {
             name: "时间",
             type: "category",
             boundaryGap: false,
-            data: hours,
+            data: timeArr,
           },
           yAxis: {
             name: "次数",
             type: "value",
           },
-          series: [
-            {
-              name: "发生次数",
-              data: numbers,
-              type: "line",
-            },
-          ],
+          series: actions.map(({ label, data }) => ({
+            name: label,
+            data: data,
+            type: "line",
+          })),
         });
         setType("line");
       });
@@ -156,7 +171,7 @@ const ActionEvent: React.FC = () => {
         )}
         {type === "line" && (
           <BasePanel.Item>
-            <ReactECharts option={option} style={{ width: "100%" }} />
+            <ReactECharts option={option} notMerge style={{ width: "100%" }} />
           </BasePanel.Item>
         )}
       </BasePanel>

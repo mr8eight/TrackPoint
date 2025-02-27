@@ -29,7 +29,7 @@ const PerformanceDashboard: React.FC = () => {
       item: <DateFilter />,
     },
     {
-      label: "页面url选择：",
+      label: "url选择：",
       name: "url",
       item: (
         <SelectFilter
@@ -37,6 +37,7 @@ const PerformanceDashboard: React.FC = () => {
             { value: "https://domain0.com", label: "https://domain0.com" },
             { value: "https://domain1.com", label: "https://domain1.com" },
           ]}
+          multipleMode={false}
         />
       ),
       button: {
@@ -57,7 +58,7 @@ const PerformanceDashboard: React.FC = () => {
       msg.push("请选择日期！");
     }
     if (!values?.url) {
-      msg.push("请选择页面url！");
+      msg.push("请选择url！");
     }
     if (msg.length > 0) {
       while (msg.length > 0) {
@@ -152,10 +153,6 @@ const PerformanceDashboard: React.FC = () => {
             ],
           },
         },
-        samples: [
-          170, 180, 160, 150, 140, 130, 120, 110, 100, 90, 80, 70, 60, 50, 40,
-          30, 20, 10, 5, 2, 1, 0.5, 0.25, 0.1,
-        ],
       });
 
       const fetchData = async () => {

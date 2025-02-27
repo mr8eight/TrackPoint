@@ -1,8 +1,13 @@
-import { Button, Input, Select, Table, Row, Col, message } from 'antd';
-import type { TableProps } from 'antd';
-import { useState, useEffect } from 'react';
-import axios from 'axios';
-import MockAdapter from 'axios-mock-adapter';
+import { Button, Table, Typography, Empty, message } from "antd";
+import { ExclamationCircleOutlined, SearchOutlined } from "@ant-design/icons";
+import type { TableProps } from "antd";
+import { useState, useEffect } from "react";
+import axios from "axios";
+import MockAdapter from "axios-mock-adapter";
+import { PanelFilter, SelectFilter } from "@/commons/Filter";
+import type { PanelFilterItems } from "@/commons/Filter";
+
+const { Text } = Typography;
 
 interface DataType {
   key: string;
@@ -14,55 +19,117 @@ interface DataType {
 
 const AlertButton = ({ record }: { record: DataType }) => {
   const handleAlert = () => {
-    axios.post('/api/send-alert', { errorKey: record.key })
+    axios
+      .post("/api/send-alert", { errorKey: record.key })
       .then(() => {
-        message.success('报警通知已发送');
+        message.success("报警通知已发送");
       })
       .catch(() => {
-        message.error('报警通知发送失败');
+        message.error("报警通知发送失败");
       });
   };
 
-  return <Button onClick={handleAlert}>报警</Button>;
+  return (
+    <Button type="primary" onClick={handleAlert}>
+      报警
+      <ExclamationCircleOutlined />
+    </Button>
+  );
 };
 
 const columns: TableProps<DataType>["columns"] = [
   {
-    title: 'URL',
-    dataIndex: 'url',
-    key: 'url',
+    title: "URL",
+    dataIndex: "url",
+    key: "url",
   },
   {
-    title: 'Type',
-    dataIndex: 'type',
-    key: 'type',
+    title: "Type",
+    dataIndex: "type",
+    key: "type",
   },
   {
-    title: 'Time',
-    dataIndex: 'time',
-    key: 'time',
+    title: "Time",
+    dataIndex: "time",
+    key: "time",
   },
   {
-    title: 'Message',
-    dataIndex: 'message',
-    key: 'message',
+    title: "Message",
+    dataIndex: "message",
+    key: "message",
   },
   {
-    title: 'Action',
-    key: 'action',
+    title: "Action",
+    key: "action",
     render: (_: any, record: DataType) => <AlertButton record={record} />,
   },
 ];
 
 const initialData: DataType[] = [
-  { key: '1', url: 'http://example.com', type: 'JS Error', time: '2025-02-23 10:00:00', message: 'Uncaught TypeError in app.js' },
-  { key: '2', url: 'http://example.com', type: 'API Error', time: '2025-02-23 10:05:00', message: '500 Internal Server Error' },
-  { key: '3', url: 'http://example.com/assets', type: 'Resource Error', time: '2025-02-23 10:10:00', message: '404 Not Found' },
+  {
+    key: "1",
+    url: "http://example.com",
+    type: "JS Error",
+    time: "2025-02-23 10:00:00",
+    message: "Uncaught TypeError in app.js",
+  },
+  {
+    key: "2",
+    url: "http://example.com",
+    type: "API Error",
+    time: "2025-02-23 10:05:00",
+    message: "500 Internal Server Error",
+  },
+  {
+    key: "3",
+    url: "http://example.com/assets",
+    type: "Resource Error",
+    time: "2025-02-23 10:10:00",
+    message: "404 Not Found",
+  },
+];
+
+const items: PanelFilterItems[] = [
+  {
+    label: "url选择：",
+    name: "urls",
+    item: (
+      <SelectFilter
+        options={[
+          { value: "http://example.com", label: "http://example.com" },
+          {
+            value: "http://example.com/assets",
+            label: "http://example.com/assets",
+          },
+          { value: "http://domain.com", label: "http://domain.com" },
+        ]}
+      />
+    ),
+  },
+  {
+    label: "异常类型选择：",
+    name: "types",
+    item: (
+      <SelectFilter
+        options={[
+          { value: "JS Error", label: "JS Error" },
+          { value: "API Error", label: "API Error" },
+          { value: "Resource Error", label: "Resource Error" },
+        ]}
+      />
+    ),
+    button: {
+      type: "submit",
+      item: (
+        <Button type="primary" icon={<SearchOutlined />} iconPosition="end">
+          查询
+        </Button>
+      ),
+    },
+  },
 ];
 
 const Exception = () => {
-  const [urlFilter, setUrlFilter] = useState('');
-  const [typeFilter, setTypeFilter] = useState('');
   const [data, setData] = useState<DataType[]>(initialData);
 
   useEffect(() => {
@@ -70,21 +137,22 @@ const Exception = () => {
     const mock = new MockAdapter(axios, { delayResponse: 300 });
 
     // 模拟 /api/get-errors 接口
-    mock.onPost('/api/get-errors').reply(config => {
-      const params = JSON.parse(config.data);
+    mock.onPost("/api/get-errors").reply((config) => {
+      const { urls, types } = JSON.parse(config.data);
       return [
         200,
         {
-          body: initialData.filter(item =>
-            (!params.url || item.url.includes(params.url)) &&
-            (!params.type || item.type === params.type)
-          )
-        }
+          exceptions: initialData.filter(
+            (item) =>
+              (!urls.length || urls.includes(item.url)) &&
+              (!types.length || types.includes(item.type))
+          ),
+        },
       ];
     });
 
     // 模拟 /api/send-alert 接口
-    mock.onPost('/api/send-alert').reply(200);
+    mock.onPost("/api/send-alert").reply(200);
 
     return () => {
       mock.restore();
@@ -93,71 +161,57 @@ const Exception = () => {
 
   const fetchErrors = async (params: any) => {
     try {
-      const { data } = await axios.post('/api/get-errors', params, {
-        headers: { 'Content-Type': 'application/json' }
+      const { data } = await axios.post("/api/get-errors", params, {
+        headers: { "Content-Type": "application/json" },
       });
-      setData(data.body);
-      message.success('查询成功！');
+      setData(data.exceptions);
+      message.success("查询成功！");
     } catch (error) {
-      console.error('Error fetching data:', error);
-      message.error('查询失败，请稍后重试');
+      console.error("Error fetching data:", error);
+      message.error("查询失败，请稍后重试");
     }
   };
-  
-  const handleUrlChange = debounce((value: string) => {
-    setUrlFilter(value);
-    fetchErrors({ url: value, type: typeFilter });
-  }, 500);
-  
-  const handleTypeChange = debounce((value: string) => {
-    setTypeFilter(value);
-    fetchErrors({ url: urlFilter, type: value });
-  }, 500);
+
+  const onSubmit = (values: any) => {
+    console.log(values);
+    const msg = [];
+    if (!values?.urls) {
+      msg.push("请选择url！");
+    }
+    if (!values?.types) {
+      msg.push("请选择异常类型！");
+    }
+    if (msg.length > 0) {
+      while (msg.length > 0) {
+        message.error(msg.shift());
+      }
+    } else {
+      fetchErrors(values);
+    }
+  };
 
   return (
     <>
-      <h1>异常分析</h1>
-      <Row gutter={16} style={{ marginBottom: 16 }}>
-        <Col span={8}>
-          <Input
-            placeholder="Filter by URL"
-            allowClear
-            onChange={(e) => handleUrlChange(e.target.value)}
-          />
-        </Col>
-        <Col span={8}>
-          <Select
-            placeholder="Filter by Type"
-            allowClear
-            style={{ width: '100%' }}
-            onChange={(value) => handleTypeChange(value)}
-            options={[
-              { value: 'JS Error', label: 'JS Error' },
-              { value: 'API Error', label: 'API Error' },
-              { value: 'Resource Error', label: 'Resource Error' }
-            ]}
-          />
-        </Col>
-      </Row>
-      
+      <Text style={{ fontSize: "2em" }}>异常分析</Text>
+      <PanelFilter items={items} onSubmit={onSubmit} />
+
       <Table
         columns={columns}
         dataSource={data}
         rowKey="key"
         bordered
         scroll={{ x: true }}
-        locale={{ emptyText: '暂无数据' }}
+        locale={{
+          emptyText: (
+            <Empty
+              style={{ width: "100%" }}
+              image={Empty.PRESENTED_IMAGE_SIMPLE}
+            />
+          ),
+        }}
       />
     </>
   );
 };
-
-function debounce<T extends (...args: any[]) => void>(fn: T, delay: number) {
-  let timer: any;
-  return (...args: Parameters<T>) => {
-    clearTimeout(timer);
-    timer = setTimeout(() => fn(...args), delay);
-  };
-}
 
 export default Exception;
