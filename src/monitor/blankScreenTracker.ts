@@ -65,7 +65,6 @@ export function blankScreen(): void {
 
         if (emptyPoints >= 18) {
             lazyReport("blankScreen", {
-                type: "blankScreen",
                 screen: `${window.screen.width}x${window.screen.height}`,
                 viewPoint: `${window.innerWidth}x${window.innerHeight}`
             });

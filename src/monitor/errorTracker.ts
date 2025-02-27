@@ -11,8 +11,6 @@ window.onerror = (msg, url, line, column, error) => {
       message: msg,
       row: line,
       column: column,
-      subType: 'js错误',
-      pageURL: url,
   })
 }
 
@@ -25,7 +23,6 @@ window.onerror = (msg, url, line, column, error) => {
       lazyReport("promise错误", {
         error: (error === null || error === void 0 ? void 0 : error.stack) || error.toString(),
         subType: 'promise',
-        pageURL: window.location.href,
       });
     } catch (e) {
       // 防止上报逻辑自身出错导致死循环
@@ -56,7 +53,6 @@ window.onerror = (msg, url, line, column, error) => {
       subType: 'resource',
       resourceType: resourceType,
       resourceUrl: resourceUrl,
-      pageURL: window.location.href,
     });
   });
 
@@ -71,6 +67,5 @@ export function errorCatcher(error : Error , msg : string ) {
     error: error.stack,
     message: msg,
     subType: 'manual',
-    pageURL: window.location.href,
   })
 }

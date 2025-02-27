@@ -6,7 +6,7 @@ import { lazyReport } from './report';
 export function pvTracker() {
     const trackPV = () => {
         // 触发 PV 埋点上报
-        lazyReport('PV', { type: 'pv' });
+        lazyReport('PV', { });
     };
 
     // 监听页面加载事件，页面加载完成时触发 PV 统计

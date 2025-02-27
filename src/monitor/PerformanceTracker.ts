@@ -20,7 +20,7 @@ export class PerformanceTracker {
     // 获取性能数据并发送上报
     private reportLoadTime() {
         const timing = performance.timing;
-        const loadTime = timing.loadEventEnd - timing.navigationStart;
+        const loadTime = timing.loadEventEnd - timing.navigationStart;4
         const domContentLoadedTime = timing.domContentLoadedEventEnd - timing.navigationStart;
 
         // const data = {
@@ -30,7 +30,7 @@ export class PerformanceTracker {
 
         // 使用现有的 lazyReport 函数进行上报
         this.lazyReport('dom渲染', {domContentLoadedTime: domContentLoadedTime});
-        this.lazyReport('内容加载事件', {loadTime: loadTime});
+        this.lazyReport('内容加载完成时间', {loadTime: loadTime});
     }
 
     // 使用引入的 lazyReport 进行上报

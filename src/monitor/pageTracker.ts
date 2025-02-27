@@ -12,14 +12,12 @@ export function hashPageTrackerReport(): void {
     const dwellTime = currentTime - lastPageTime;
     lastPageTime = currentTime;
     lazyReport("hashPage", {
-      pageURL: window.location.href,
       event: "hashchange",
       dwellTime
     });
   });
   // 初始上报一次，不计算停留时间
   lazyReport("hashPage", {
-    pageURL: window.location.href,
     event: "initial"
   });
 }
@@ -34,7 +32,6 @@ export function historyPageTrackerReport(): void {
     const dwellTime = currentTime - lastPageTime;
     lastPageTime = currentTime;
     lazyReport("historyPage", {
-      pageURL: window.location.href,
       event: "popstate",
       dwellTime: dwellTime
     });
@@ -48,7 +45,6 @@ export function historyPageTrackerReport(): void {
     const dwellTime = currentTime - lastPageTime;
     lastPageTime = currentTime;
     lazyReport("historyPage", {
-      pageURL: window.location.href,
       event: "pushState",
       dwellTime: dwellTime
     });
@@ -62,7 +58,6 @@ export function historyPageTrackerReport(): void {
     const dwellTime = currentTime - lastPageTime;
     lastPageTime = currentTime;
     lazyReport("historyPage", {
-      pageURL: window.location.href,
       event: "replaceState",
       dwellTime: dwellTime
     });

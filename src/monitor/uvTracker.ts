@@ -23,7 +23,6 @@ export function uvTracker() {
 
     // 上报 UV 数据
     lazyReport('UV', { 
-      type: 'uv', 
       newVisitor: isNewVisitor 
     });
   };
