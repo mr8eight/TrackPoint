@@ -19,7 +19,8 @@ type ShowType = "hour" | "day";
 
 export interface TimeRange {
   showType: ShowType;
-  selectTime: string | number;
+  startTime: string;
+  endTime: string;
 }
 
 interface Option {
@@ -27,7 +28,7 @@ interface Option {
   label: string;
 }
 
-interface CascaderOption extends Option {
+export interface CascaderOption extends Option {
   children?: CascaderOption[];
 }
 
@@ -49,15 +50,22 @@ export interface DateFilterProps {
 }
 
 export interface BaseFilterProps {
+  placeholder?: string;
+  style?: React.CSSProperties;
+  multipleMode?: boolean;
+  maxCount?: number;
   options: Option[];
-  value?: Option["value"];
-  onChange?: (value: Option["value"]) => void;
+  value?: Option["value"][] | Option["value"];
+  onChange?: (value: Option["value"][] | Option["value"]) => void;
 }
 
 export interface CascaderFilterProps {
+  placeholder?: string;
+  style?: React.CSSProperties;
+  multipleMode?: boolean;
   options: CascaderOption[];
-  value?: CascaderOption["value"][];
-  onChange?: (value: CascaderOption["value"][]) => void;
+  value?: CascaderOption["value"][][];
+  onChange?: (value: CascaderOption["value"][][]) => void;
 }
 
 export interface PanelFilterProps {

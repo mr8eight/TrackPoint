@@ -1,5 +1,5 @@
 import { DatePicker, Select, Space } from "antd";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import dayjs, { Dayjs } from "dayjs";
 import type { DatePickerType, DateFilterProps } from "@/commons/Filter";
 
@@ -13,6 +13,31 @@ const DateFilter: React.FC<DateFilterProps> = ({
 }) => {
   const [type, setType] = useState<DatePickerType>("date");
   const [current, setCurrent] = useState<Dayjs>(value);
+
+  useEffect(() => {
+    if (current) {
+      switch (type) {
+        case "date": {
+          onChange({
+            showType: "hour",
+            startTime: current.format("YYYY-MM-DD"),
+            endTime: current.format("YYYY-MM-DD"),
+          });
+          break;
+        }
+        case "month": {
+          onChange({
+            showType: "day",
+            startTime: current.startOf(type).format("YYYY-MM-DD"),
+            endTime: current.endOf(type).format("YYYY-MM-DD"),
+          });
+          break;
+        }
+      }
+    } else {
+      onChange(undefined);
+    }
+  }, [type, current]);
 
   const startDate = dayjs(startTime).endOf("day"),
     endDate = dayjs(endTime).endOf("day");
@@ -37,26 +62,6 @@ const DateFilter: React.FC<DateFilterProps> = ({
   };
   const onDateChange = (date: Dayjs) => {
     setCurrent(date);
-    if (date) {
-      switch (type) {
-        case "date": {
-          onChange({
-            showType: "hour",
-            selectTime: date.format("YYYY-MM-DD"),
-          });
-          break;
-        }
-        case "month": {
-          onChange({
-            showType: "day",
-            selectTime: date.format("YYYY-MM"),
-          });
-          break;
-        }
-      }
-    } else {
-      onChange(undefined);
-    }
   };
 
   return (

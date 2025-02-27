@@ -1,17 +1,24 @@
 import { Cascader } from "antd";
 import type { CascaderProps, GetProp } from "antd";
-import type { CascaderFilterProps } from "@/commons/Filter";
+import type { CascaderFilterProps, CascaderOption } from "@/commons/Filter";
 import { useState } from "react";
 
 type DefaultOptionType = GetProp<CascaderProps, "options">[number];
 
 const CascaderFilter: React.FC<CascaderFilterProps> = ({
+  placeholder = "Please Select",
+  style = { width: 250 },
+  multipleMode = true,
   options,
   value,
   onChange,
 }) => {
   const [current, setCurrent] = useState(value);
-  const onCascaderChange = (value) => {
+  const onCascaderChange: CascaderProps<
+    CascaderOption,
+    "value",
+    true
+  >["onChange"] = (value) => {
     setCurrent(value);
     onChange(value);
   };
@@ -30,7 +37,11 @@ const CascaderFilter: React.FC<CascaderFilterProps> = ({
       value={current}
       onChange={onCascaderChange}
       showSearch={{ filter }}
-      placeholder="Please Select"
+      placeholder={placeholder}
+      {...(multipleMode && {
+        multiple: true,
+      })}
+      style={style}
     />
   );
 };
