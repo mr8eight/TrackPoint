@@ -7,6 +7,9 @@ var logger = require('morgan');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var eventsRouter = require('./routes/events');
+const trackingRoutes = require('./routes/trackingRoutes');
+const eventAttributeRoutes = require('./routes/eventAttribute');
+
 
 var app = express();
 
@@ -25,6 +28,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/events', eventsRouter);
+// 使用埋点路由
+app.use('/tracking', trackingRoutes);
+app.use('/eventAttribute', eventAttributeRoutes);
 
 // 后置中间件，捕获404错误
 app.use(function(req, res, next) {
