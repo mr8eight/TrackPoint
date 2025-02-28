@@ -19,6 +19,7 @@ const PerformanceDashboard: React.FC = () => {
     FCP: number;
     LCP: number;
     DOMContentLoaded: number;
+    loadTime: number;
     CLS: number;
   } | null>(null);
   const [messageApi, contextHolder] = message.useMessage();
@@ -153,6 +154,18 @@ const PerformanceDashboard: React.FC = () => {
               1400, 1300,
             ],
           },
+          loadTime: {
+            avg: [
+              1700, 1800, 1600, 1800, 1400, 1300, 1200, 1300, 1000, 900, 1800,
+              1700, 1600, 1500, 900, 1300, 1200, 1300, 1500, 1250, 1200, 1400,
+              1300, 1200,
+            ],
+            max: [
+              1800, 1900, 1700, 1900, 1500, 1400, 1300, 1600, 1500, 1200, 1900,
+              1800, 2000, 1600, 1500, 1400, 1300, 1900, 2100, 1500, 1250, 1500,
+              1400, 1300,
+            ],
+          },
           CLS: {
             avg: [
               0.1, 0.2, 0.15, 0.1, 0.05, 0.04, 0.03, 0.02, 0.01, 0.005, 0.004,
@@ -184,6 +197,7 @@ const PerformanceDashboard: React.FC = () => {
           FCP: calculateAvg(response.data.metrics.FCP.avg) / 1000,
           LCP: calculateAvg(response.data.metrics.LCP.avg) / 1000,
           DOMContentLoaded: calculateAvg(response.data.metrics.DOMContentLoaded.avg) / 1000,
+          loadTime: calculateAvg(response.data.metrics.loadTime.avg) / 1000,
           CLS: calculateAvg(response.data.metrics.CLS.avg),
         });
       };
@@ -247,6 +261,15 @@ const PerformanceDashboard: React.FC = () => {
                 </BasePanel.Item>
                 <BasePanel.Item>
                   <PerformanceBar
+                    title="内容加载完成时间"
+                    data={[2, 1.5, 1.5]}
+                    markLineValue={avgValues.loadTime}
+                    markLineLabel={`${avgValues.loadTime.toFixed(2)}s`}
+                    max={5}
+                  />
+                </BasePanel.Item>
+                <BasePanel.Item>
+                  <PerformanceBar
                     title="布局偏移量 (CLS)"
                     data={[0.1, 0.15, 0.75]}
                     markLineValue={avgValues.CLS}
@@ -285,6 +308,14 @@ const PerformanceDashboard: React.FC = () => {
                   <LineChart
                     title="DOM渲染完成时间"
                     data={data.metrics.DOMContentLoaded}
+                    time={data.time}
+                    yAxisName="花费时间  (ms)"
+                  />
+                </BasePanel.Item>
+                <BasePanel.Item>
+                  <LineChart
+                    title="内容加载完成时间"
+                    data={data.metrics.loadTime}
                     time={data.time}
                     yAxisName="花费时间  (ms)"
                   />
