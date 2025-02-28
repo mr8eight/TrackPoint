@@ -15,7 +15,7 @@ const SelectFilter: React.FC<BaseFilterProps> = ({
   const [current, setCurrent] = useState(value);
   const onSelectChange = (value: string[]) => {
     setCurrent(value);
-    if (value.length > 0) {
+    if (value && value.length > 0) {
       onChange(value);
     } else {
       onChange(undefined);

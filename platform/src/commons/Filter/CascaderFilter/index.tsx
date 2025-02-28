@@ -20,7 +20,11 @@ const CascaderFilter: React.FC<CascaderFilterProps> = ({
     true
   >["onChange"] = (value) => {
     setCurrent(value);
-    onChange(value);
+    if (value && value.length > 0) {
+      onChange(value);
+    } else {
+      onChange(undefined);
+    }
   };
 
   const filter = (inputValue: string, path: DefaultOptionType[]) =>
