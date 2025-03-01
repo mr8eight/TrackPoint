@@ -1,13 +1,7 @@
 import type { RouteObject } from "react-router-dom";
 import { useRoutes } from "react-router-dom";
 import MainLayout from "@/layouts/MainLayout";
-import {
-  Home,
-  ActionEvent,
-  ActionRetention,
-  Performance,
-  Exception,
-} from "@/pages";
+import { Home, Action, Performance, Exception } from "@/pages";
 
 const routes: RouteObject[] = [
   {
@@ -19,16 +13,7 @@ const routes: RouteObject[] = [
       },
       {
         path: "/action",
-        children: [
-          {
-            path: "event",
-            element: <ActionEvent />,
-          },
-          {
-            path: "retention",
-            element: <ActionRetention />,
-          },
-        ],
+        element: <Action />,
       },
       {
         path: "/performance",

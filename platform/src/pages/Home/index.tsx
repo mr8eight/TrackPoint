@@ -17,7 +17,11 @@ const Home: React.FC = () => {
       <Paragraph>帮助团队打造一个优质软件产品</Paragraph>
       <Flex gap={"1em"}>
         <Button>
-          <Link to="https://github.com/mr8eight/TrackPoint" target="_blank">
+          <Link
+            to="https://github.com/mr8eight/TrackPoint"
+            target="_blank"
+            rel="noopener"
+          >
             <Space>
               Github
               <GithubFilled />
@@ -25,7 +29,7 @@ const Home: React.FC = () => {
           </Link>
         </Button>
         <Button type="primary">
-          <Link to="/action/event">立即开始</Link>
+          <Link to="/action">立即开始</Link>
         </Button>
       </Flex>
     </div>

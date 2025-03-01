@@ -18,8 +18,8 @@ const { Text } = Typography;
 
 const actionOptions = [
   {
-    label: "行为",
-    value: "action",
+    label: "点击行为",
+    value: "点击行为",
     children: [
       {
         label: "点击注册按钮",
@@ -29,9 +29,19 @@ const actionOptions = [
         label: "点击登录按钮",
         value: "点击登录按钮",
       },
+    ],
+  },
+  {
+    label: "浏览行为",
+    value: "浏览行为",
+    children: [
       {
-        label: "浏览主页面",
-        value: "浏览主页面",
+        label: "浏览注册页面",
+        value: "浏览注册页面",
+      },
+      {
+        label: "浏览登录页面",
+        value: "浏览登录页面",
       },
     ],
   },
@@ -74,7 +84,7 @@ const items: PanelFilterItems[] = [
   },
 ];
 
-const ActionEvent: React.FC = () => {
+const Action: React.FC = () => {
   const [type, setType] = useState<"nodata" | "line">("nodata");
   const [option, setOption] = useState<any>(null);
   const [messageApi, contextHolder] = message.useMessage();
@@ -158,7 +168,7 @@ const ActionEvent: React.FC = () => {
   };
   return (
     <>
-      <Text style={{ fontSize: "2em" }}>事件分析</Text>
+      <Text style={{ fontSize: "2em" }}>行为分析</Text>
       <PanelFilter items={items} onSubmit={onSubmit} />
       <BasePanel headerText="数据展示" headerIcon={<LineChartOutlined />}>
         {type === "nodata" && (
@@ -180,4 +190,4 @@ const ActionEvent: React.FC = () => {
   );
 };
 
-export default ActionEvent;
+export default Action;

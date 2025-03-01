@@ -1,7 +1,6 @@
-import ActionEvent from "./ActionEvent";
-import ActionRetention from "./ActionRetention";
+import Action from "./Action";
 import Exception from "./Exception";
 import Performance from "./Performance";
 import Home from "./Home";
 
-export { ActionEvent, ActionRetention, Exception, Performance, Home };
+export { Action, Exception, Performance, Home };

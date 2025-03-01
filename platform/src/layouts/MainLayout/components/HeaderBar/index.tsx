@@ -7,37 +7,22 @@ import { MenuItem } from "@/types";
 const { Header } = Layout;
 const { Title } = Typography;
 
-const eventPath = "/action/event";
-const retentionPath = "/action/retention";
+const actionPath = "/action";
 const performancePath = "/performance";
 const exceptionPath = "/exception";
 
-type MenuKey =
-  | "action"
-  | "event"
-  | "retention"
-  | "performance"
-  | "exception"
-  | "";
+type MenuKey = "action" | "performance" | "exception" | "";
 
 const map: Record<string, MenuKey> = {
-  [eventPath]: "event",
-  [retentionPath]: "retention",
+  [actionPath]: "action",
   [performancePath]: "performance",
   [exceptionPath]: "exception",
 };
 
 const items: MenuItem[] = [
   {
-    key: "action",
-    label: "行为监控",
-    children: [
-      { key: map[eventPath], label: <Link to={eventPath}>事件分析</Link> },
-      {
-        key: map[retentionPath],
-        label: <Link to={retentionPath}>留存分析</Link>,
-      },
-    ],
+    key: map[actionPath],
+    label: <Link to={actionPath}>行为监控</Link>,
   },
   {
     key: map[performancePath],
@@ -53,12 +38,8 @@ const HeaderBar: React.FC = () => {
   useEffect(() => {
     const pathName = location.pathname;
     switch (pathName) {
-      case eventPath: {
-        setCurrent(map[eventPath]);
-        break;
-      }
-      case retentionPath: {
-        setCurrent(map[retentionPath]);
+      case actionPath: {
+        setCurrent(map[actionPath]);
         break;
       }
       case performancePath: {
