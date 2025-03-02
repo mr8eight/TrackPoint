@@ -25,11 +25,11 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // 路由中间件
+// 使用埋点路由
+app.use('/tracking', trackingRoutes);
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/events', eventsRouter);
-// 使用埋点路由
-app.use('/tracking', trackingRoutes);
 app.use('/eventAttribute', eventAttributeRoutes);
 
 // 后置中间件，捕获404错误

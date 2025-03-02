@@ -1,8 +1,14 @@
+-- 删除表（如果存在）
+DROP TABLE IF EXISTS tracking_attributes;
+DROP TABLE IF EXISTS tracking_data;
+DROP TABLE IF EXISTS event_attributes;
+DROP TABLE IF EXISTS events;
+
 -- 事件表（存储埋点事件基本信息）
 CREATE TABLE events (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,  -- 事件ID
-    name VARCHAR(255) NOT NULL,           -- 事件名称
-    description TEXT,                      -- 事件描述
+    event_key VARCHAR(255) NOT NULL,       -- 事件key
+    event_name VARCHAR(255) NOT NULL,      -- 事件名称
     status TINYINT DEFAULT 1,              -- 事件状态（1:启用, 0:禁用）
     create_time DATETIME DEFAULT CURRENT_TIMESTAMP,  -- 创建时间
     update_time DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP  -- 更新时间
@@ -12,7 +18,8 @@ CREATE TABLE events (
 CREATE TABLE event_attributes (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     event_id BIGINT NOT NULL,              -- 关联的事件ID
-    attribute_name VARCHAR(255) NOT NULL,  -- 属性名称
+    attribute_key VARCHAR(255) NOT NULL,   -- 属性key
+    attribute_name VARCHAR(255) NOT NULL,  -- 属性名
     attribute_type VARCHAR(50) NOT NULL,   -- 属性类型（string, number, boolean等）
     is_required TINYINT DEFAULT 0,         -- 是否必填（1:是, 0:否）
     FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE CASCADE
@@ -23,8 +30,12 @@ CREATE TABLE tracking_data (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     event_id BIGINT NOT NULL,              -- 关联的事件ID
     user_id VARCHAR(255),                  -- 用户ID
-    app_id VARCHAR(255) NOT NULL,          -- 应用ID
-    event_time DATETIME NOT NULL,          -- 事件发生时间
+    user_agent  VARCHAR(255) NOT NULL,     -- 客户端信息
+    app_id VARCHAR(255),                   -- 应用ID
+    app_version VARCHAR(50),               -- 应用版本
+    app_type VARCHAR(50) NOT NULL,         -- 客户端类型（desktop,web,h5,wechat_mini_program,alipay_mini_program,ios_app,android_app）
+    current_url VARCHAR(255) NOT NULL,               -- 当前URL
+    event_time DATETIME DEFAULT CURRENT_TIMESTAMP,  -- 事件发生时间
     FOREIGN KEY (event_id) REFERENCES events(id)
 );
 
