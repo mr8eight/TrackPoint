@@ -7,7 +7,8 @@
         "skipLibCheck": true,
         "forceConsistentCasingInFileNames": true,
         "outDir": "./dist",
-        "rootDir": "./src"
+        "rootDir": "./src",
+        "lib": ["ESNext", "DOM"] // 添加 lib 选项，包含 ESNext 和 DOM 标准库
     },
     "include": ["src/**/*.ts"]
 }

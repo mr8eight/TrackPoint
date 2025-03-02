@@ -18,7 +18,14 @@ module.exports = {
         rules: [
             {
                 test: /\.ts$/,
-                use: 'ts-loader',
+                use: [
+                    {
+                        loader: 'ts-loader',
+                        options: {
+                            configFile: path.resolve(__dirname, 'tsconfig.json') // 明确指定 tsconfig.json 文件路径
+                        }
+                    }
+                ],
                 exclude: /node_modules/
             }
         ]

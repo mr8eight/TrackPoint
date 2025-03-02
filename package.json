@@ -4,17 +4,19 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-        "build": "webpack --config webpack.config.js --mode production",
-        "dev": "webpack --config webpack.config.js --mode development"
-    },
+    "build": "webpack --config webpack.config.js --mode production",
+    "dev": "webpack --config webpack.config.js --mode development"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/web": "^0.0.208",
+    "@types/whatwg-url": "^13.0.0",
     "clean-webpack-plugin": "^4.0.0",
     "html-webpack-plugin": "^5.6.3",
     "ts-loader": "^9.5.2",
-    "typescript": "^5.7.3",
+    "typescript": "^5.8.2",
     "webpack": "^5.97.1",
     "webpack-cli": "^6.0.1"
   }
