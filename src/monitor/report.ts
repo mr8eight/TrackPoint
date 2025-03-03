@@ -2,18 +2,26 @@ import { getCache, addCache, clearCache } from './cache';
 
 let timer: ReturnType<typeof setTimeout> | undefined;
 
-interface ReportParams {
+interface AttributeItem {
+    attribute_key: string;
+    attribute_value: string;
+  }
+
+
+  interface ReportParams {
     [key: string]: any;
-}
+  }
 
 interface LogParams {
-    appId?: string; // 项目的appId
-    userId?: string; // 用户id
-    type: string; // error/action/visit/user
-    data: ReportParams; // 上报的数据
-    currentTime: string; // 时间戳
-    currentPage: string; // 当前页面
-    ua: string; // ua信息
+    app_id?: string; // 项目的appId
+    user_id?: string; // 用户id
+    event_key: string; // error/action/visit/user
+    attributes: AttributeItem[]; // 上报的数据
+    event_time: string; // 时间
+    current_url: string; // 当前页面
+    user_agent: string; // ua信息
+    app_type: string;//web
+    app_version: string|null;
 }
 
 // 在Window下挂上自定义属性
@@ -27,7 +35,7 @@ declare global {
 }
 
 const currentTimeToString = function(){
-    const date = new Date(); // 等效于 new Date(new Date().getTime())
+    const date = new Date(); 
   
     const padZero = (num: number): string => {
         return num < 10 ? `0${num}` : `${num}`;
@@ -48,14 +56,21 @@ export function lazyReport(type: string, params: ReportParams): void {
     const userId = window._user_id_;
     const delay = window._delay_;
 
+    const attributes = Object.entries(params).map(([key, value]) => ({
+        attribute_key: key,
+        attribute_value: value,
+      }));
+
     const logParams: LogParams = {
-        appId, // 项目的appId
-        userId, // 用户id
-        type, // error/action/visit/user
-        data: params, // 上报的数据
-        currentTime: currentTimeToString(), // 时间戳
-        currentPage: window.location.href, // 当前页面
-        ua: navigator.userAgent, // ua信息
+        event_key: type, // error/action/visit/user
+        user_id: userId, // 用户id
+        app_type: 'web', //哪个端
+        app_id: appId, // 项目的appId
+        app_version: null, //app版本
+        current_url: window.location.href, // 当前页面
+        event_time: currentTimeToString(), // 时间"xxxx-xx-xx xx:xx:xx""
+        user_agent: navigator.userAgent, // ua信息
+        attributes: attributes, // 上报的数据
     };
 
     let logParamsString = JSON.stringify(logParams);
