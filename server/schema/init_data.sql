@@ -6,6 +6,8 @@ INSERT INTO events (event_key, event_name) VALUES
 ('performance_monitor', '性能监控'),
 ('error_monitor', '异常监控');
 
+--先执行上面的语句，再执行下面的语句
+
 -- 初始化事件属性数据
 INSERT INTO event_attributes (event_id, attribute_key, attribute_name, attribute_type, is_required) VALUES
 -- 按钮点击事件属性
@@ -144,7 +146,7 @@ INSERT INTO tracking_data (event_id, user_id, app_type, app_id, app_version, cur
 (5, 'user_40001', 'web', 'web_001', '1.0.0', 'https://example.com/dashboard', '2025-01-03 10:15:22', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'),
 (5, 'user_40002', 'h5', 'h5_002', '2.1.3', 'https://m.example.com/dashboard', '2025-01-10 14:30:45', 'Mozilla/5.0 (Linux; Android 10; SM-G981B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36'),
 (5, 'user_40003', 'wechat_mini_program', 'wx_003', '3.2.1', 'pages/dashboard/index', '2025-01-15 16:45:12', 'Mozilla/5.0 (Linux; Android 10; SM-G981B) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/120.0.0.0 MQQBrowser/7.0 Mobile Safari/537.36'),
-(5, 'user_40004', 'alipay_mini_program', 'alipay_004', '1.5.0', 'pages/dashboard/index', '2025-01-20 10:10:33', 'Mozilla/5.0 (Linux; Android 10; SM-G981B) AppleWebKit/537.36 (KHTML, like Gecko) Version/4极客时间/7.0 Mobile Safari/537.36'),
+(5, 'user_40004', 'alipay_mini_program', 'alipay_004', '1.5.0', 'pages/dashboard/index', '2025-01-20 10:10:33', 'Mozilla/5.0 (Linux; Android 10; SM-G981B) AppleWebKit/537.36 (KHTML, like Gecko) Version/4/7.0 Mobile Safari/537.36'),
 (5, 'user_40005', 'ios_app', 'ios_005', '4.0.2', 'app://dashboard', '2025-01-25 13:25:44', 'ExampleApp/4.0.1 (iPhone; iOS 17.2; Scale/3.00)'),
 (5, 'user_40006', 'android_app', 'android_006', '3.1.2', 'app://dashboard', '2025-01-30 11:03:36', 'ExampleApp/3.1.2 (Linux; Android 13; SM-G981B)'),
 (5, 'user_40007', 'desktop', 'desktop_007', '5.0.0', 'https://desktop.example.com/dashboard', '2025-02-05 15:20:55', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.1 Safari/605.1.15'),

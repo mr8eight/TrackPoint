@@ -1,10 +1,7 @@
 -- 删除表（如果存在）
-DROP TABLE IF EXISTS tracking_attributes;
-DROP TABLE IF EXISTS tracking_data;
-DROP TABLE IF EXISTS event_attributes;
-DROP TABLE IF EXISTS events;
 
 -- 事件表（存储埋点事件基本信息）
+DROP TABLE IF EXISTS events;
 CREATE TABLE events (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,  -- 事件ID
     event_key VARCHAR(255) NOT NULL,       -- 事件key
@@ -15,6 +12,7 @@ CREATE TABLE events (
 );
 
 -- 事件属性表（存储事件的扩展属性）
+DROP TABLE IF EXISTS event_attributes;
 CREATE TABLE event_attributes (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     event_id BIGINT NOT NULL,              -- 关联的事件ID
@@ -26,6 +24,7 @@ CREATE TABLE event_attributes (
 );
 
 -- 埋点数据表（存储实际的上报数据）
+DROP TABLE IF EXISTS tracking_data;
 CREATE TABLE tracking_data (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     event_id BIGINT NOT NULL,              -- 关联的事件ID
@@ -40,6 +39,7 @@ CREATE TABLE tracking_data (
 );
 
 -- 埋点属性数据表（存储事件属性的具体值）
+DROP TABLE IF EXISTS tracking_attributes;
 CREATE TABLE tracking_attributes (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     tracking_id BIGINT NOT NULL,           -- 关联的埋点数据ID

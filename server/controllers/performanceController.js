@@ -14,6 +14,31 @@ async function getPerformanceData(req, res) {
     const end = new Date(endTime);
     const timeDiff = end - start;
     const isHourly = timeDiff <= 24 * 60 * 60 * 1000; // 判断是否按小时计算
+    const timeSlots = isHourly ? 
+        Math.ceil((end - start) / (60 * 60 * 1000)) : // 按实际相差小时数计算
+        Math.ceil(timeDiff / (24 * 60 * 60 * 1000));  // 按天计算
+
+    //转换时间格式为YYYY-MM-DD HH:mm:ss
+    let handleTimeString = (time) => {
+        const date = new Date(time);
+        // 转换为本地时间字符串
+        return date.toLocaleString('zh-CN', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: false // 使用24小时制
+        }).replace(/\//g, '-'); // 将斜杠替换为横杠
+    }
+    
+    // 生成时间维度范围数组
+    const timeDimension = [];
+    for (let i = 0; i < timeSlots; i++) {
+        const slotTime = new Date(start.getTime() + (i * (isHourly ? 60 * 60 * 1000 : 24 * 60 * 60 * 1000)));
+        timeDimension.push(handleTimeString(slotTime));
+    }
 
     // 构建查询条件
     const where = {
@@ -39,15 +64,22 @@ async function getPerformanceData(req, res) {
                 }
             }]
         });
+        // 初始化结果数组
+        const result = {
+            FP: { avg: new Array(timeSlots).fill(0), max: new Array(timeSlots).fill(0) },
+            FCP: { avg: new Array(timeSlots).fill(0), max: new Array(timeSlots).fill(0) },
+            LCP: { avg: new Array(timeSlots).fill(0), max: new Array(timeSlots).fill(0) },
+            CLS: { avg: new Array(timeSlots).fill(0), max: new Array(timeSlots).fill(0) },
+            timeDimension
+        };
 
-        // 按时间维度分组
         const groupedData = {};
-        let timeData = []
+        // 处理每个时间段的性能数据
         performanceData.forEach(data => {
             const timeKey = isHourly ? 
-                new Date(data.event_time).toISOString().slice(0, 13) : // 按小时
-                new Date(data.event_time).toISOString().slice(0, 10); // 按天
-
+                Math.floor((new Date(data.event_time) - start) / (60 * 60 * 1000)) : // 按小时计算索引
+                Math.floor((new Date(data.event_time) - start) / (24 * 60 * 60 * 1000)); // 按天计算索引
+            data.event_time = handleTimeString(data.event_time);
             if (!groupedData[timeKey]) {
                 groupedData[timeKey] = {
                     fp: [],
@@ -57,7 +89,8 @@ async function getPerformanceData(req, res) {
                 };
             }
             // 解析性能指标
-            data.TrackingAttributes.forEach(attr => {
+            if(data.TrackingAttributes) {
+                data.TrackingAttributes.forEach(attr => {
                 const value = parseFloat(attr.attribute_value);
                 switch (attr.attribute_id) {
                     case 8: groupedData[timeKey].fp.push(value); break;
@@ -66,34 +99,25 @@ async function getPerformanceData(req, res) {
                     case 11: groupedData[timeKey].cls.push(value); break;
                 }
             });
-            // 转换时间格式
-            const formattedTime = new Date(data.event_time).toISOString().replace('T', ' ').slice(0, 19);
-            timeData.push(formattedTime);
+            }
+
         });
-
-        // 计算结果
-        const result = {
-            FP: { avg: [], max: [] },
-            FCP: { avg: [], max: [] },
-            LCP: { avg: [], max: [] },
-            CLS: { avg: [], max: [] },
-            timeData
-        };
-
-        Object.keys(groupedData).sort().forEach(timeKey => {
-            const data = groupedData[timeKey];
-            result.FP.avg.push(calculateAvg(data.fp));
-            result.FP.max.push(calculateMax(data.fp));
-            result.FCP.avg.push(calculateAvg(data.fcp));
-            result.FCP.max.push(calculateMax(data.fcp));
-            result.LCP.avg.push(calculateAvg(data.lcp));
-            result.LCP.max.push(calculateMax(data.lcp));
-            result.CLS.avg.push(calculateAvg(data.cls));
-            result.CLS.max.push(calculateMax(data.cls));
+        for (let i = 0; i < timeSlots; i++) {
+            result.FP.avg[i] = calculateAvg(groupedData[i]?.fp || []);
+            result.FP.max[i] = calculateMax(groupedData[i]?.fp || []);
+            result.FCP.avg[i] = calculateAvg(groupedData[i]?.fcp || []);
+            result.FCP.max[i] = calculateMax(groupedData[i]?.fcp || []);
+            result.LCP.avg[i] = calculateAvg(groupedData[i]?.lcp || []);
+            result.LCP.max[i] = calculateMax(groupedData[i]?.lcp || []);
+            result.CLS.avg[i] = calculateAvg(groupedData[i]?.cls || []);
+            result.CLS.max[i] = calculateMax(groupedData[i]?.cls || []);
+        }
+        res.send({
+            state: 0,
+            message: "查询成功",
+            // data: performanceData
+            data: result
         });
-
-        res.json(result);
-        // res.json(performanceData);
     } catch (error) {
         console.error('查询性能监控数据失败:', error);
         res.status(500).json({ error: '查询性能监控数据失败' });
