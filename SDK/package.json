@@ -1,8 +1,8 @@
 {
-  "name": "monitor_sdk",
+  "name": "sdk",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "dist/monitor_sdk.js",
   "scripts": {
     "build": "webpack --config webpack.config.js --mode production",
     "dev": "webpack --config webpack.config.js --mode development"

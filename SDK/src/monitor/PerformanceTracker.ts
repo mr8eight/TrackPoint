@@ -19,7 +19,7 @@ export class PerformanceTracker {
 
     // 获取性能数据并发送上报
     private reportLoadTime() {
-        const timing = performance.timing;
+        const timing = performance.timing; 
         const loadTime = timing.loadEventEnd - timing.navigationStart;4
         const domContentLoadedTime = timing.domContentLoadedEventEnd - timing.navigationStart;
 

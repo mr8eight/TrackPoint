@@ -3,6 +3,7 @@
     import { errorCatcher } from './monitor/errorTracker';
     import { report } from './monitor/report';
     import { getCache } from './monitor/cache';
+    import { tracker } from './monitor/actionTracker';
 
     /**
      * 初始化配置
@@ -24,4 +25,4 @@
     }
 
     // 导出
-    export { init, errorCatcher };
+    export { init, tracker , errorCatcher };

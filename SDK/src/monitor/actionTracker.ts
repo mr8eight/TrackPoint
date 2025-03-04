@@ -1,6 +1,6 @@
 
 import { lazyReport } from './report';
-import { getPathTo } from './loadConfig';
+// import { getPathTo } from './loadConfig';
 
 /**
  * 手动上报
@@ -35,13 +35,14 @@ export function autoTrackerReport() : void {
         actionType: 'click',
         data: target
       });
-    } else {
-      // 获取被点击元素的dom路径
-      const path : string = getPathTo(clickedDom);
-      lazyReport('action', {
-        actionType: 'click',
-        data: path
-      });
-    }
+    } 
+    // else {
+    //   // 获取被点击元素的dom路径
+    //   const path : string = getPathTo(clickedDom);
+    //   lazyReport('action', {
+    //     actionType: 'click',
+    //     data: path
+    //   });
+    // }
   }, false);
 }

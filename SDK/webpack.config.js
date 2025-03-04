@@ -13,19 +13,13 @@ module.exports = {
     },
     resolve: {
         extensions: ['.ts', '.js']
+        
     },
     module: {
         rules: [
             {
                 test: /\.ts$/,
-                use: [
-                    {
-                        loader: 'ts-loader',
-                        options: {
-                            configFile: path.resolve(__dirname, 'tsconfig.json') // 明确指定 tsconfig.json 文件路径
-                        }
-                    }
-                ],
+                use: 'ts-loader',
                 exclude: /node_modules/
             }
         ]
