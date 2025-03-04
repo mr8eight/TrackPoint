@@ -94,12 +94,33 @@ const items: PanelFilterItems[] = [
   {
     label: "url选择：",
     name: "urls",
-    item: <SelectFilter options={urlOptions} />,
+    item: (
+      <SelectFilter
+        options={[
+          { label: '首页', value: '/home' }, // 首页
+          { label: '登录页', value: '/login' }, // 登录页
+          { label: '注册页', value: '/register' }, // 注册页
+          { label: '商品页', value: '/product' }, // 商品页
+          { label: '商品详情页', value: '/product/' } // 商品详情页
+        ]}
+      />
+    ),
   },
   {
     label: "异常类型选择：",
     name: "types",
-    item: <SelectFilter options={errorOptions} />,
+    item: (
+      <SelectFilter
+        options={[
+          { label: 'js错误', value: 'js错误' },
+          { label: 'promise错误', value: 'promise错误' },
+          { label: '资源加载错误', value: '资源加载错误' },
+          { label: '手动捕获错误', value: '手动捕获错误' },
+          { label: '接口请求超时', value: '接口请求超时' },
+          { label: '接口错误', value: '接口错误' }
+        ]}
+      />
+    ),
     button: {
       type: "submit",
       item: (
@@ -113,49 +134,45 @@ const items: PanelFilterItems[] = [
 
 const Exception = () => {
   const [data, setData] = useState<DataType[]>(initialData);
+  const [pagination, setPagination] = useState({ current: 1, pageSize: 1 });
+  const [filters, setFilters] = useState<Record<string, any>>({});
 
   useEffect(() => {
-    // 创建 axios-mock-adapter 实例并设置延时（可选）
-    const mock = new MockAdapter(axios, { delayResponse: 300 });
-
-    // 模拟 /api/get-errors 接口
-    mock.onPost("/api/get-errors").reply((config) => {
-      const { urls, types } = JSON.parse(config.data);
-      return [
-        200,
-        {
-          exceptions: initialData.filter(
-            (item) =>
-              (!urls.length || urls.includes(item.url)) &&
-              (!types.length || types.includes(item.type))
-          ),
-        },
-      ];
-    });
-
-    // 模拟 /api/send-alert 接口
-    mock.onPost("/api/send-alert").reply(200);
-
-    return () => {
-      mock.restore();
-    };
-  }, []);
+    //检查filters是否为空 如果为空则不请求
+    if (Object.keys(filters).length > 0) {
+      console.log(filters);
+      fetchErrors(filters);
+    }
+  }, [filters, pagination]);
 
   const fetchErrors = async (params: any) => {
     try {
-      const { data } = await axios.post("/api/get-errors", params, {
-        headers: { "Content-Type": "application/json" },
-      });
-      setData(data.exceptions);
-      message.success("查询成功！");
+      const requestParams = {
+        ...params,
+        urls: params.urls?.join(','),
+        types: params.types?.join(','),
+        startTime: params.startTime || '2025-02-15 00:00:00',
+        endTime: params.endTime || '2025-02-15 23:59:59',
+        page: pagination.current,
+        pageSize: pagination.pageSize
+      };
+      const { data } = await axios.post("/tracking/errorMonitor", requestParams);
+      setData(data.data.list);
+      message.success(data.message);
     } catch (error) {
       console.error("Error fetching data:", error);
       message.error("查询失败，请稍后重试");
     }
   };
 
+  const handleTableChange = (pag: any) => {
+    setPagination({
+      current: pag.current,
+      pageSize: pag.pageSize
+    });
+  };
+
   const onSubmit = (values: any) => {
-    console.log(values);
     const msg = [];
     if (!values?.urls) {
       msg.push("请选择url！");
@@ -168,10 +185,9 @@ const Exception = () => {
         message.error(msg.shift());
       }
     } else {
-      fetchErrors(values);
+      setFilters(values);
     }
   };
-
   return (
     <>
       <Text style={{ fontSize: "2em" }}>异常分析</Text>
@@ -183,6 +199,14 @@ const Exception = () => {
         rowKey="key"
         bordered
         scroll={{ x: true }}
+        pagination={{
+          current: pagination.current,
+          pageSize: pagination.pageSize,
+          showSizeChanger: true,
+          pageSizeOptions: ['1', '2', '3'],
+          showTotal: total => `共 ${total} 条`
+        }}
+        onChange={handleTableChange}
         locale={{
           emptyText: (
             <Empty
