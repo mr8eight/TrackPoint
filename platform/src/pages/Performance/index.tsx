@@ -74,8 +74,7 @@ const PerformanceDashboard: React.FC = () => {
         content: "查询成功！",
       });
       
-      const startTime = values.date[0];
-      const endTime = values.date[1];
+      const { showType, startTime, endTime } = values.date;
 
       const fetchData = async () => {
         // 发送 POST 请求，如果日期是同一天则显示小时数据，否则显示天数据
