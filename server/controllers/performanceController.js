@@ -3,7 +3,8 @@ const {TrackingData, TrackingAttributes} = require('../models/TrackingData.js');
 // const TrackingAttributes = require('../models/TrackingAttributes.js');
 
 async function getPerformanceData(req, res) {
-    const { startTime, endTime, url } = req.query;
+    // 将req.query改为req.body
+    const { startTime, endTime, url } = req.body;
     
     // 验证时间范围
     if (!startTime || !endTime) {

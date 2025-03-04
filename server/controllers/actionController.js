@@ -2,7 +2,7 @@ const { Op } = require('sequelize');
 const {TrackingData, TrackingAttributes} = require('../models/TrackingData.js');
 
 async function getEventStats(req, res) {
-    const { startTime, endTime, action } = req.query;
+    const { startTime, endTime, action } = req.body;
 
     // 验证参数
     if (!startTime || !endTime || !action) {

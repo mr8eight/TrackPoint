@@ -7,9 +7,6 @@ const errorMonitorController = require('../controllers/errorMonitorController');
 const router = express.Router();
 
 router.get('/', trackingController.getAllTrackings);
-router.get('/performance', performanceController.getPerformanceData);
-router.get('/eventStats', actionController.getEventStats);
-router.get('/errorMonitor', errorMonitorController.getErrorMonitorData);
 // 创建埋点数据
 router.post('/', trackingController.createTracking);
 
@@ -21,5 +18,10 @@ router.put('/', trackingController.updateTracking);
 
 // 删除埋点数据
 router.delete('/:id', trackingController.deleteTracking);
+
+// 性能监控数据
+router.post('/performance', performanceController.getPerformanceData);
+router.post('/eventStats', actionController.getEventStats);
+router.post('/errorMonitor', errorMonitorController.getErrorMonitorData);
 
 module.exports = router;

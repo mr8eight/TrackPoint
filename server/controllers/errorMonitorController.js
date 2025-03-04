@@ -2,7 +2,8 @@ const { Op } = require('sequelize');
 const {TrackingData, TrackingAttributes} = require('../models/TrackingData.js');
 
 async function getErrorMonitorData(req, res) {
-    const { startTime, endTime, urls = '', types = '', page = 1, pageSize = 10 } = req.query;
+    // 将req.query改为req.body
+    const { startTime, endTime, urls = '', types = '', page = 1, pageSize = 10 } = req.body;
     try {
         // 构建查询条件
         const where = {
