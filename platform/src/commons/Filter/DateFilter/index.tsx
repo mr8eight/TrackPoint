@@ -20,16 +20,16 @@ const DateFilter: React.FC<DateFilterProps> = ({
         case "date": {
           onChange({
             showType: "hour",
-            startTime: current.format("YYYY-MM-DD"),
-            endTime: current.format("YYYY-MM-DD"),
+            startTime: current.format("YYYY-MM-DD 00:00:00"),
+            endTime: current.format("YYYY-MM-DD 23:59:59"),
           });
           break;
         }
         case "month": {
           onChange({
             showType: "day",
-            startTime: current.startOf(type).format("YYYY-MM-DD"),
-            endTime: current.endOf(type).format("YYYY-MM-DD"),
+            startTime: current.startOf(type).format("YYYY-MM-DD 00:00:00"),
+            endTime: current.endOf(type).format("YYYY-MM-DD 23:59:59"),
           });
           break;
         }

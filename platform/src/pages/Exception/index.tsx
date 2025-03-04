@@ -6,6 +6,7 @@ import axios from "axios";
 import MockAdapter from "axios-mock-adapter";
 import { PanelFilter, SelectFilter } from "@/commons/Filter";
 import type { PanelFilterItems } from "@/commons/Filter";
+import { urlOptions, errorOptions } from "@/data";
 
 const { Text } = Typography;
 
@@ -93,31 +94,12 @@ const items: PanelFilterItems[] = [
   {
     label: "url选择：",
     name: "urls",
-    item: (
-      <SelectFilter
-        options={[
-          { value: "http://example.com", label: "http://example.com" },
-          {
-            value: "http://example.com/assets",
-            label: "http://example.com/assets",
-          },
-          { value: "http://domain.com", label: "http://domain.com" },
-        ]}
-      />
-    ),
+    item: <SelectFilter options={urlOptions} />,
   },
   {
     label: "异常类型选择：",
     name: "types",
-    item: (
-      <SelectFilter
-        options={[
-          { value: "JS Error", label: "JS Error" },
-          { value: "API Error", label: "API Error" },
-          { value: "Resource Error", label: "Resource Error" },
-        ]}
-      />
-    ),
+    item: <SelectFilter options={errorOptions} />,
     button: {
       type: "submit",
       item: (

@@ -1,62 +1,14 @@
 import { useState } from "react";
 import { Button, Typography, Empty, message } from "antd";
 import { SearchOutlined, LineChartOutlined } from "@ant-design/icons";
-import {
-  DateFilter,
-  CascaderFilter,
-  PanelFilter,
-  RadioFilter,
-} from "@/commons/Filter";
+import { DateFilter, PanelFilter, SelectFilter } from "@/commons/Filter";
 import type { PanelFilterItems } from "@/commons/Filter";
 import { BasePanel } from "@/commons/Panel";
-import axios from "axios";
-import MockAdapter from "axios-mock-adapter";
 import ReactECharts from "echarts-for-react";
-import { getChartTimeArr, getChartTimeLength } from "@/commons/function";
+import { getChartTimeArr } from "@/commons/function";
+import { actionOptions } from "@/data";
 
 const { Text } = Typography;
-
-const actionOptions = [
-  {
-    label: "点击行为",
-    value: "点击行为",
-    children: [
-      {
-        label: "点击注册按钮",
-        value: "点击注册按钮",
-      },
-      {
-        label: "点击登录按钮",
-        value: "点击登录按钮",
-      },
-    ],
-  },
-  {
-    label: "浏览行为",
-    value: "浏览行为",
-    children: [
-      {
-        label: "浏览注册页面",
-        value: "浏览注册页面",
-      },
-      {
-        label: "浏览登录页面",
-        value: "浏览登录页面",
-      },
-    ],
-  },
-];
-
-const radioOptions = [
-  {
-    value: "total",
-    label: "总次数（含重复用户）",
-  },
-  {
-    value: "unique",
-    label: "去重次数（独立用户）",
-  },
-];
 
 const items: PanelFilterItems[] = [
   {
@@ -66,13 +18,8 @@ const items: PanelFilterItems[] = [
   },
   {
     label: "行为选择：",
-    name: "actions",
-    item: <CascaderFilter options={actionOptions} />,
-  },
-  {
-    label: "统计规则：",
-    name: "rule",
-    item: <RadioFilter options={radioOptions} />,
+    name: "action",
+    item: <SelectFilter options={actionOptions} multipleMode={false} />,
     button: {
       type: "submit",
       item: (
@@ -90,16 +37,12 @@ const Action: React.FC = () => {
   const [messageApi, contextHolder] = message.useMessage();
 
   const onSubmit = (values: any) => {
-    console.log(values);
     const msg = [];
     if (!values?.date) {
       msg.push("请选择日期！");
     }
-    if (!values?.actions) {
+    if (!values?.action) {
       msg.push("请选择行为！");
-    }
-    if (!values?.rule) {
-      msg.push("请选择统计规则！");
     }
     if (msg.length > 0) {
       while (msg.length > 0) {
@@ -109,61 +52,76 @@ const Action: React.FC = () => {
         });
       }
     } else {
-      messageApi.open({
-        type: "success",
-        content: "查询成功！",
-      });
-      const mock = new MockAdapter(axios);
-      mock.onPost("/api/actionEvent").reply((config) => {
-        const { date, actions } = JSON.parse(config.data);
-        const timeLen = getChartTimeLength(date);
-
-        return [
-          200,
-          {
-            actions: actions.map((action) => ({
-              label: action[action.length - 1],
-              data: new Array(timeLen)
-                .fill(0)
-                .map(() => Math.ceil(Math.random() * 1000)),
-            })),
-          },
-        ];
-      });
-      axios.post("/api/actionEvent", values).then((res) => {
-        let timeArr = getChartTimeArr(values.date);
-
-        const { actions } = res.data;
-
-        setOption({
-          title: {
-            text: `${values.date.startTime} ~ ${values.date.endTime}`,
-            right: "right",
-          },
-          legend: {
-            data: actions.map(({ label }) => label),
-          },
-          tooltip: {
-            trigger: "axis",
-          },
-          xAxis: {
-            name: "时间",
-            type: "category",
-            boundaryGap: false,
-            data: timeArr,
-          },
-          yAxis: {
-            name: "次数",
-            type: "value",
-          },
-          series: actions.map(({ label, data }) => ({
-            name: label,
-            data: data,
-            type: "line",
-          })),
+      let timeArr = getChartTimeArr(values.date);
+      let reqData = {
+        startTime: values.date.startTime,
+        endTime: values.date.endTime,
+        action: values.action,
+      };
+      // 发送请求
+      fetch("/tracking/eventStats", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(reqData),
+      })
+        .then((res) => res.json())
+        .then((res) => {
+          if (res.state !== 0) {
+            messageApi.open({
+              type: "success",
+              content: res.message,
+            });
+            const { pv, uv } = res.data;
+            setOption({
+              title: {
+                text: `${reqData.startTime} ~ ${reqData.endTime}`,
+                right: "right",
+              },
+              legend: {
+                data: ["pv", "uv"],
+              },
+              tooltip: {
+                trigger: "axis",
+              },
+              xAxis: {
+                name: "时间",
+                type: "category",
+                boundaryGap: false,
+                data: timeArr,
+              },
+              yAxis: {
+                name: "次数",
+                type: "value",
+              },
+              series: [
+                {
+                  name: "pv",
+                  data: pv,
+                  type: "line",
+                },
+                {
+                  name: "uv",
+                  data: uv,
+                  type: "line",
+                },
+              ],
+            });
+            setType("line");
+          } else {
+            messageApi.open({
+              type: "error",
+              content: res.message,
+            });
+          }
+        })
+        .catch((error) => {
+          messageApi.open({
+            type: "error",
+            content: error.message,
+          });
         });
-        setType("line");
-      });
     }
   };
   return (

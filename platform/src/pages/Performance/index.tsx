@@ -7,6 +7,7 @@ import PerformanceBar from "./PerformanceBarComponent";
 import { DateFilter, PanelFilter, SelectFilter } from "@/commons/Filter";
 import type { PanelFilterItems } from "@/commons/Filter";
 import { BasePanel } from "@/commons/Panel";
+import { urlOptions } from "@/data";
 
 const { Text } = Typography;
 
@@ -30,15 +31,7 @@ const PerformanceDashboard: React.FC = () => {
     {
       label: "url选择：",
       name: "url",
-      item: (
-        <SelectFilter
-          options={[
-            { value: "https://domain0.com", label: "https://domain0.com" },
-            { value: "https://domain1.com", label: "https://domain1.com" },
-          ]}
-          multipleMode={false}
-        />
-      ),
+      item: <SelectFilter options={urlOptions} multipleMode={false} />,
       button: {
         type: "submit",
         item: (
@@ -71,7 +64,7 @@ const PerformanceDashboard: React.FC = () => {
         type: "success",
         content: "查询成功！",
       });
-      
+
       const { showType, startTime, endTime } = values.date;
       const urls = [values.url];
 
@@ -80,10 +73,10 @@ const PerformanceDashboard: React.FC = () => {
         try {
           const response = await axios.post(
             "http://localhost:3000/tracking/performance",
-            { 
-              urls, 
-              startTime, 
-              endTime 
+            {
+              urls,
+              startTime,
+              endTime,
             }
           );
 
