@@ -73,13 +73,18 @@ const PerformanceDashboard: React.FC = () => {
       });
       
       const { showType, startTime, endTime } = values.date;
+      const urls = [values.url];
 
       const fetchData = async () => {
         // 发送 POST 请求，如果日期是同一天则显示小时数据，否则显示天数据
         try {
           const response = await axios.post(
             "http://localhost:3000/tracking/performance",
-            { startTime, endTime }
+            { 
+              urls, 
+              startTime, 
+              endTime 
+            }
           );
 
           if (response.data.state !== 0) {
