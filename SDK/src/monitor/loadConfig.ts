@@ -4,6 +4,7 @@ import { errorTrackerReport } from './errorTracker';
 import { blankScreen } from './blankScreenTracker';
 import { pvTracker } from './pvTracker';
 import { uvTracker } from './uvTracker';
+import { observeWebVitals } from './webVitalTracker';
 
 // 定义配置选项的接口
 export interface ConfigOptions {
@@ -17,6 +18,7 @@ export interface ConfigOptions {
   blankReport: boolean; // 是否开启空白页面监控
   pvReport: boolean; //是否开启pv监测
   uvReport: boolean;//是否开启uv监测
+  webVitalsReport:boolean;//是否开启webVitals监测
 }
 
 /**
@@ -27,14 +29,15 @@ export function loadConfig(options: ConfigOptions) {
   const { 
     appId,  // 系统id
     userId, // 用户id
-    reportUrl, // 后端url
+    reportUrl, // 后端url, http://localhost:3000/tracking
     autoTracker, // 自动埋点
     delay, // 延迟和合并上报的功能
     hashPage, // 是否hash录有
     errorReport, // 是否开启错误监控
     blankReport, // 是否开启空白页面监控
     pvReport, //是否开启pv监测
-    uvReport //是否开启uv监测
+    uvReport, //是否开启uv监测
+    webVitalsReport, //是否开启webVitals监测
 
   } = options;
 
@@ -50,7 +53,7 @@ export function loadConfig(options: ConfigOptions) {
 
   // --------- 服务端地址 ----------------
   if (reportUrl) {
-    (window as any)['_report_url_'] = reportUrl;
+    (window as any)['_report_url_'] = reportUrl; // http://localhost:3000/tracking
   }
 
   // -------- 合并上报的间隔 ------------
@@ -85,6 +88,10 @@ export function loadConfig(options: ConfigOptions) {
 
   if(uvReport){
     uvTracker();//uv监测
+  }
+
+  if(webVitalsReport){
+    observeWebVitals();
   }
 
 }
