@@ -3,7 +3,7 @@ import { ExclamationCircleOutlined, SearchOutlined } from "@ant-design/icons";
 import type { TableProps } from "antd";
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { PanelFilter, SelectFilter } from "@/commons/Filter";
+import { PanelFilter, SelectFilter, DateFilter } from "@/commons/Filter";
 import type { PanelFilterItems } from "@/commons/Filter";
 import { urlOptions, errorOptions } from "@/data";
 
@@ -19,14 +19,7 @@ interface DataType {
 
 const AlertButton = ({ record }: { record: DataType }) => {
   const handleAlert = () => {
-    axios
-      .post("/api/send-alert", { errorKey: record.key })
-      .then(() => {
-        message.success("报警通知已发送");
-      })
-      .catch(() => {
-        message.error("报警通知发送失败");
-      });
+    message.success("报警通知已发送");
   };
 
   return (
@@ -65,31 +58,12 @@ const columns: TableProps<DataType>["columns"] = [
   },
 ];
 
-const initialData: DataType[] = [
-  {
-    key: "1",
-    url: "http://example.com",
-    type: "JS Error",
-    time: "2025-02-23 10:00:00",
-    message: "Uncaught TypeError in app.js",
-  },
-  {
-    key: "2",
-    url: "http://example.com",
-    type: "API Error",
-    time: "2025-02-23 10:05:00",
-    message: "500 Internal Server Error",
-  },
-  {
-    key: "3",
-    url: "http://example.com/assets",
-    type: "Resource Error",
-    time: "2025-02-23 10:10:00",
-    message: "404 Not Found",
-  },
-];
-
 const items: PanelFilterItems[] = [
+  {
+    label: "日期选择：",
+    name: "date",
+    item: <DateFilter />,
+  },
   {
     label: "url选择：",
     name: "urls",
@@ -111,32 +85,22 @@ const items: PanelFilterItems[] = [
 ];
 
 const Exception = () => {
-  const [data, setData] = useState<DataType[]>(initialData);
-  const [pagination, setPagination] = useState({ current: 1, pageSize: 1 });
-  const [filters, setFilters] = useState<Record<string, any>>({});
-
-  useEffect(() => {
-    //检查filters是否为空 如果为空则不请求
-    if (Object.keys(filters).length > 0) {
-      console.log(filters);
-      fetchErrors(filters);
-    }
-  }, [filters, pagination]);
+  const [data, setData] = useState<DataType[]>();
+  const [reqData, setReqData] = useState<Record<string, any>>({
+    current: 1,
+    pageSize: 10,
+  });
 
   const fetchErrors = async (params: any) => {
     try {
-      const requestParams = {
-        ...params,
-        urls: params.urls?.join(","),
-        types: params.types?.join(","),
-        startTime: params.startTime || "2025-02-15 00:00:00",
-        endTime: params.endTime || "2025-02-15 23:59:59",
-        page: pagination.current,
-        pageSize: pagination.pageSize,
-      };
       const { data } = await axios.post(
-        "/tracking/errorMonitor",
-        requestParams
+        "http://localhost:3000/tracking/errorMonitor",
+        params,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
       );
       setData(data.data.list);
       message.success(data.message);
@@ -146,27 +110,38 @@ const Exception = () => {
     }
   };
 
-  const handleTableChange = (pag: any) => {
-    setPagination({
-      current: pag.current,
+  const handleTableChange = async (pag: any) => {
+    setReqData({
+      ...reqData,
+      page: pag.current,
       pageSize: pag.pageSize,
     });
+    await fetchErrors(reqData);
   };
 
-  const onSubmit = (values: any) => {
+  const onSubmit = async (values: any) => {
     const msg = [];
+    if (!values?.date) {
+      msg.push("请选择日期！");
+    }
     if (!values?.urls) {
       msg.push("请选择url！");
     }
     if (!values?.types) {
       msg.push("请选择异常类型！");
     }
+
+    // 无论是否通过验证都更新 filters 状态
+    setReqData({
+      ...reqData,
+      ...msg,
+    });
+    await fetchErrors(reqData);
     if (msg.length > 0) {
-      while (msg.length > 0) {
-        message.error(msg.shift());
-      }
-    } else {
-      setFilters(values);
+      // 使用延时确保消息顺序显示
+      msg.forEach((messageText, index) => {
+        setTimeout(() => message.error(messageText), index * 100);
+      });
     }
   };
   return (
@@ -181,11 +156,8 @@ const Exception = () => {
         bordered
         scroll={{ x: true }}
         pagination={{
-          current: pagination.current,
-          pageSize: pagination.pageSize,
-          showSizeChanger: true,
-          pageSizeOptions: ["1", "2", "3"],
-          showTotal: (total) => `共 ${total} 条`,
+          current: reqData.page,
+          pageSize: reqData.pageSize,
         }}
         onChange={handleTableChange}
         locale={{

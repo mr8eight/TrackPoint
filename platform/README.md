@@ -4,240 +4,117 @@
 
 TrackPoint Platform 是一个将埋点SDK上报数据可视化的平台，它提供了三个模块：行为分析、性能分析和异常分析。每个模块包含筛选面板和数据看板，平台用户可以通过筛选面板自由选择条件，以分析经数据服务统计处理后的埋点数据。
 
+## 项目启动
+
+```
+pnpm install
+pnpm start
+```
+
+## 技术栈
+
+1. React + TypeScript + Scss：基本搭建。
+2. React Router：React路由库，实现路由和导航功能。
+3. Antd：React组件库，构建布局和筛选面板模块。
+4. Echarts + Echarts for React：适用于React的Echarts图表库，构建数据看板模块。
+5. Axios + Axios Mock Adapter：请求库，模拟服务端响应。
+6. dayjs：处理时间格式。
+
+## 目录结构
+
+```
+platform
+│  config-overrides.js            // 重写webpack文件
+│  package.json                   // 依赖项
+│  README.md                      // 说明文档
+│  tsconfig.json                  // ts配置文件
+└─src
+    │  data.tsx                   // 筛选面板的选项数据
+    │  global.scss                // 全局scss文件
+    │  global.ts                  // 全局ts文件
+    │  index.tsx                  // 入口文件
+    │  routes.tsx                 // 路由文件
+    ├─commons                     // 通用文件夹
+    │  ├─Filter                   // 筛选面板组件
+    │  │  ├─CascaderFilter        // 级联选择器
+    │  │  ├─DateFilter            // 日期选择器
+    │  │  ├─PanelFilter           // 筛选面板
+    │  │  ├─RadioFilter           // 单选框
+    │  │  └─SelectFilter          // 下拉框
+    │  ├─function                 // 通用函数
+    │  └─Panel
+    │      └─BasePanel
+    ├─layouts
+    │  └─MainLayout               // 整体布局
+    ├─pages
+    │  ├─Action                   // 行为监控页面
+    │  ├─Exception                // 异常监控页面
+    │  ├─Home                     // 主页面
+    │  └─Performance              // 性能监控页面
+    └─themes
+        └─antd                    // Antd主题配置文件
+```
+
 ## 项目内容
 
 ### 行为分析
 
-分析用户在指定时间内的行为动向。
+分析用户在指定时间内的行为动向，即统计指定用户在指定时间段内发生指定行为的次数。
 
 #### 筛选面板
 
-包含所有行为，开始时间和结束时间（开始时间 <= 可选时间 <= 结束时间）。
+##### 日期选择器
 
-##### 选项格式样本
+在可控范围内，按天筛选 or 按月筛选。
 
-```
-const data = {
-    // 时间范围
-    date: {
-        startTime: "2025-01-01 00:00:00",
-        endTime: "2025-02-01 00:00:00",
-    },
-    // 行为范围
-    actionOptions: [
-      {
-        label: "点击行为",
-        value: "点击行为",
-        children: [
-          {
-            label: "点击注册按钮",
-            value: "点击注册按钮",
-          },
-          {
-            label: "点击登录按钮",
-            value: "点击登录按钮",
-          },
-        ],
-      },
-      {
-        label: "浏览行为",
-        value: "浏览行为",
-        children: [
-          {
-            label: "浏览注册页面",
-            value: "浏览注册页面",
-          },
-          {
-            label: "浏览登录页面",
-            value: "浏览登录页面",
-          },
-        ],
-      },
-    ],
-    ruleOptions: [
-    {
-        value: "总次数（含重复用户）",
-        label: "总次数（含重复用户）",
-    },
-    {
-        value: "去重次数（独立用户）",
-        label: "去重次数（独立用户）",
-    },
-    ]
-};
-```
+- 日期范围按天筛选，可视化看板按小时展示。
+- 日期范围按月筛选，可视化看板按天展示。
+
+##### 行为选择器
+
+在可控范围内，单选。
 
 #### 数据看板
 
-单选日期和规则，多选行为。响应相关行为在指定时间的发生次数和行为名称。
-
-##### 请求内容格式样本
-
-```
-const reqData = {
-    date: {
-        showType: "hour", // "hour" | "day"
-        startTime: "2025-02-06",
-        endTime: "2025-02-06",
-    },
-    rule: "unique", // "unique" | "total"
-    actions: [["点击行为", "点击注册按钮"], ["浏览行为", "浏览登录页面"]],
-};
-```
-
-##### 响应内容格式样本
-
-```
-const resData = {
-    actions: [{
-        label: "点击注册按钮",
-        data: [150, 230, ... , 260],
-    }, {
-        label: "浏览登录页面",
-        data: [150, 230, ... , 260],
-    },]
-};
-```
+- x轴为时间，y轴为发生次数。
+- 响应相关行为在指定时间内的发生次数和行为名称。
 
 ### 性能分析
 
-分析页面在指定时间内的性能指标。
+分析指定 URL 在指定时间段内的性能指标数据，帮助开发者了解网站的加载速度和用户体验。性能指标包括首次绘制时间（FP）、首次内容绘制时间（FCP）、最大内容绘制时间（LCP）、累积布局偏移（CLS）。
 
 #### 筛选面板
 
-包含所有url，开始时间和结束时间（开始时间 <= 可选时间 <= 结束时间）。
+##### 日期选择器
 
-##### 选项格式样本
+在可控范围内，按天筛选 or 按月筛选。
 
-```
-const data = {
-    // 时间范围
-    date: {
-        startTime: "2025-01-01 00:00:00",
-        endTime: "2025-02-01 00:00:00",
-    },
-    // url范围
-    urlOptions: [
-        {
-            label: "https://domain0.com",
-            value: "https://domain0.com",
-        }, {
-            label: "https://domain1.com",
-            value: "https://domain1.com",
-        },
-    ],
-};
-```
+- 日期范围按天筛选，可视化看板按小时展示。
+- 日期范围按月筛选，可视化看板按天展示。
+
+##### URL选择器
+
+在可控范围内，单选。
 
 #### 数据看板
 
-单选url和时间。响应指定页面在指定时间的所有性能指标的平均值和最大值。
-
-##### 请求内容格式样本
-
-```
-const reqData = {
-    date: {
-        showType: "day",
-        startTime: "2025-02-01",
-        endTime: "2025-02-28"
-    },
-    url: "https://domain0.com",
-};
-```
-
-##### 响应内容格式样本
-
-```
-const resData = {
-  metrics: {
-    FP: {             // 首次绘制时间
-      avg: [1700, 1800, ..., 1600],
-      max: [1700, 1800, ..., 1600],
-    },
-    FCP: {              // 首次内容渲染时间
-      avg: [1700, 1800, ..., 1600],
-      max: [1700, 1800, ..., 1600],
-    },
-    LCP: {              // 最大内容渲染时间
-      avg: [1700, 1800, ..., 1600],
-      max: [1700, 1800, ..., 1600],
-    },
-    CLS: {              // 布局偏移量
-      avg: [0.1, 0.2, ..., 0.05],   // 平均值（分数）
-      max: [0.1, 0.2, ..., 0.05],
-    },
-  },
-};
-```
+- 简略模式（柱状图）：显示FP、FCP、LCP、CLS的平均值；详细模式（折线图）：显示FP、FCP、LCP、CLS的平均值和最大值随时间的变化趋势。
+- 响应相关 URL 在指定时间内的性能指标数据，以折线图或柱状图形式展示不同时间点的性能趋势，并提供平均值和最大值统计数据。
 
 ### 异常分析
 
-分析页面在指定时间内发生异常的类型。
+分析发生异常页面的url和类型。
 
 #### 筛选面板
 
-包含所有发生异常页面的url和异常类型。
+##### URL选择器
 
-##### 选项格式样本
+在可控范围内，多选。
 
-```
-const data = {
-    // url范围
-    urlOptions: [
-        {
-            label: "https://domain0.com",
-            value: "https://domain0.com",
-        }, {
-            label: "https://domain1.com",
-            value: "https://domain1.com",
-        },
-    ],
-    // 异常类型范围
-    typeOptions: [
-        {
-            label: "JS Error",
-            value: "JS Error",
-        }, {
-            label: "Resource Error",
-            value: "Resource Error",
-        },
-    ],
-};
-```
+##### 异常类型选择器
+
+在可控范围内，多选。
 
 #### 数据看板
 
-多选发生异常页面的url和异常类型。响应相关数据。
-
-##### 请求内容格式样本
-
-```
-const reqData = {
-    urls: ["https://domain0.com", "https://domain1.com"],
-    types: ["JS Error", "Resource Error"],
-};
-```
-
-##### 响应内容格式样本
-
-```
-const resData = {
-    exceptions: [
-      {
-        key: "page_id",
-        url: "https://domain0.com",
-        type: "JS Error",
-        time: "2025-02-23 10:00:00",
-        message:
-          "Uncaught TypeError: Cannot read properties of undefined (reading 'a') at index.html:90:29",
-      }, {
-        key: "page_id",
-        url: "https://domain1.com",
-        type: "JS Error",
-        time: "2025-02-23 10:00:00",
-        message:
-          "Uncaught TypeError: Cannot read properties of undefined (reading 'a') at index.html:90:29",
-      },],
-};
-```
+以表格形式呈现，最后一列为操作，里面包含报警按钮，点击后，可以向开发人员或测试人员发送邮件。
