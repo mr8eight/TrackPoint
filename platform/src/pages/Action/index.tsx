@@ -59,7 +59,7 @@ const Action: React.FC = () => {
         action: values.action,
       };
       // 发送请求
-      fetch("/tracking/eventStats", {
+      fetch("http://localhost:3000/tracking/eventStats", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -68,12 +68,20 @@ const Action: React.FC = () => {
       })
         .then((res) => res.json())
         .then((res) => {
-          if (res.state !== 0) {
+          if (res.error) {
+            messageApi.open({
+              type: "error",
+              content: res.error,
+            });
+            return;
+          }
+          const { state, message, data } = res;
+          if (state === 0) {
             messageApi.open({
               type: "success",
               content: res.message,
             });
-            const { pv, uv } = res.data;
+            const { pv, uv } = data;
             setOption({
               title: {
                 text: `${reqData.startTime} ~ ${reqData.endTime}`,
@@ -112,15 +120,9 @@ const Action: React.FC = () => {
           } else {
             messageApi.open({
               type: "error",
-              content: res.message,
+              content: message,
             });
           }
-        })
-        .catch((error) => {
-          messageApi.open({
-            type: "error",
-            content: error.message,
-          });
         });
     }
   };

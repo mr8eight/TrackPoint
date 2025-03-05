@@ -1,3 +1,11 @@
+-- 初始化事件数据
+INSERT INTO events (event_key, event_name) VALUES
+('button_click', '按钮点击'),
+('add_cart', '加入购物车'),
+('page_jump', '页面跳转'),
+('performance_monitor', '性能监控'),
+('error_monitor', '异常监控');
+
 -- 初始化事件属性数据
 INSERT INTO event_attributes (event_id, attribute_key, attribute_name, attribute_type, is_required) VALUES
 -- 按钮点击事件属性
