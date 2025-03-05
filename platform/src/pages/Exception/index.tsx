@@ -3,7 +3,6 @@ import { ExclamationCircleOutlined, SearchOutlined } from "@ant-design/icons";
 import type { TableProps } from "antd";
 import { useState, useEffect } from "react";
 import axios from "axios";
-import MockAdapter from "axios-mock-adapter";
 import { DateFilter, PanelFilter, SelectFilter } from "@/commons/Filter";
 import type { PanelFilterItems } from "@/commons/Filter";
 import { urlOptions, errorOptions } from "@/data";
@@ -159,8 +158,8 @@ const Exception = () => {
       const requestParams = {
         urls: params.urls,
         types: params.types,
-        startTime: params.date.startTime || "2025-02-15 00:00:00",
-        endTime: params.date.endTime || "2025-02-15 23:59:59",
+        startTime: params.date?.startTime || "2025-02-15 00:00:00",
+        endTime: params.date?.endTime || "2025-02-15 23:59:59",
         page: pagination.current,
         pageSize: pagination.pageSize,
       };
