@@ -187,7 +187,7 @@ export function lazyReport(type: string, params: ReportParams): void {
         user_id: userId, // 用户id
         app_type: 'web', //哪个端
         app_id: appId, // 项目的appId
-        app_version: null, //app版本
+        app_version: '1.0.0', //app版本
         current_url: window.location.href, // 当前页面
         event_time: currentTimeToString(), // 时间"xxxx-xx-xx xx:xx:xx""
         user_agent: navigator.userAgent, // ua信息
@@ -218,7 +218,7 @@ export function report(data: LogParams): void {
             const blob = new Blob([jsonData], { 
                 type: 'application/json; charset=UTF-8' 
             });
-            console.log(123123123);
+            console.log('Beacon curl command:', `curl -X POST -H "Content-Type: application/json" -d '${jsonData}' "${url}"`);
             navigator.sendBeacon(url, blob);
         } else { 
             let oImage = new Image();

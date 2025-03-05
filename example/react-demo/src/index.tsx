@@ -3,22 +3,21 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-// Update the import path
 import { init } from 'sdk';
 import { BrowserRouter as Router } from 'react-router-dom';
 
-// Initialize SDK configuration
+//注册埋点
 init({
-    appId: 'app001', // Replace with the actual appId
-    userId: 'user001', // Replace with the actual userId
-    reportUrl: 'http://localhost:3000/tracking', // Replace with the actual backend reporting address
-    autoTracker: true, // Enable automatic event tracking
-    delay: 0, // Delay and merge reporting time in milliseconds
-    hashPage: false, // Set according to whether it is a hash route
-    errorReport: true, // Enable error monitoring
-    blankReport: true, // Enable blank page monitoring
-    pvReport: true, // Enable PV monitoring
-    uvReport: true, // Enable UV monitoring
+    appId: 'app001', 
+    userId: 'user001', 
+    reportUrl: 'http://localhost:3000/tracking', 
+    autoTracker: true, 
+    delay: 0, 
+    hashPage: false, 
+    errorReport: true, 
+    blankReport: true, 
+    pvReport: true, 
+    uvReport: true, 
     webVitalsReport:true
 });
 

@@ -9,8 +9,10 @@ const Page1 = () => {
             <h1>Page 1</h1>
             {/* 使用 initButton 组件 */}
             {initButton()}
+            <br/>
             {/* 使用 MyButton 组件 */}
             {MyButton()}
+            <br/>
             <button><Link to="/page2">Go to Page 2</Link></button>
             <button><Link to="/page3">Go to Page 3</Link></button>
         </div>
