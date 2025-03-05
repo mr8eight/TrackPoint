@@ -89,7 +89,6 @@ const Exception = () => {
   const [reqData, setReqData] = useState<Record<string, any>>({
     page: 1,
     pageSize: 10,
-    total: 50,
   });
 
   const fetchErrors = async (params: any) => {
