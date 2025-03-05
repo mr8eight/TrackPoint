@@ -30,8 +30,8 @@ const PerformanceDashboard: React.FC = () => {
     },
     {
       label: "url选择：",
-      name: "url",
-      item: <SelectFilter options={urlOptions} multipleMode={false} />,
+      name: "urls",
+      item: <SelectFilter options={urlOptions} multipleMode={true} />,
       button: {
         type: "submit",
         item: (
@@ -44,12 +44,11 @@ const PerformanceDashboard: React.FC = () => {
   ];
 
   const onSubmit = (values: any) => {
-    console.log(values);
     const msg = [];
     if (!values?.date) {
       msg.push("请选择日期！");
     }
-    if (!values?.url) {
+    if (!values?.urls) {
       msg.push("请选择url！");
     }
     if (msg.length > 0) {
@@ -60,13 +59,7 @@ const PerformanceDashboard: React.FC = () => {
         });
       }
     } else {
-      messageApi.open({
-        type: "success",
-        content: "查询成功！",
-      });
-
-      const { showType, startTime, endTime } = values.date;
-      const urls = [values.url];
+      const { startTime, endTime } = values.date;
 
       const fetchData = async () => {
         // 发送 POST 请求，如果日期是同一天则显示小时数据，否则显示天数据
@@ -74,9 +67,14 @@ const PerformanceDashboard: React.FC = () => {
           const response = await axios.post(
             "http://localhost:3000/tracking/performance",
             {
-              urls,
               startTime,
               endTime,
+              urls: values.urls,
+            },
+            {
+              headers: {
+                "Content-Type": "application/json",
+              },
             }
           );
 
