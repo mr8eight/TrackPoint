@@ -208,29 +208,22 @@ export function lazyReport(type: string, params: ReportParams): void {
 }
 
 
-export function report(data: LogParams): void { // 修改入参为单个对象
+export function report(data: LogParams): void {
     try {
         const url = window._report_url_;
-        const jsonData = JSON.stringify(data); // 序列化单个对象
-        
-        // 修复 curl 命令（移除数组操作）
-        const curlCommandBeacon = `curl -X POST -H "Content-Type: application/json" -d '${jsonData}' "${url}"`;
-        const curlCommandImage = `curl "${url}?logs=${encodeURIComponent(jsonData)}"`;
+        const jsonData = JSON.stringify(data);
 
-        // console.log('Beacon curl command:', curlCommandBeacon);
-        // console.log('Image curl command:', curlCommandImage);
-
+        // 修改点：使用 Blob 指定 Content-Type
         if (navigator.sendBeacon) { 
-            navigator.sendBeacon(url, jsonData); 
-            console.log('Beacon curl command:', curlCommandBeacon);
+            const blob = new Blob([jsonData], { 
+                type: 'application/json; charset=UTF-8' 
+            });
+            console.log(123123123);
+            navigator.sendBeacon(url, blob);
         } else { 
             let oImage = new Image();
             oImage.src = `${url}?logs=${encodeURIComponent(jsonData)}`;
-            console.log('Image curl command:', curlCommandImage);
         }
-
-        // 清除缓存（如果不需要批量上报）
-        // clearCache(); 
     } catch (error) {
         console.error('report 函数执行出错:', error);
     }

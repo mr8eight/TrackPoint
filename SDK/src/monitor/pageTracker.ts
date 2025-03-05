@@ -15,11 +15,10 @@ const setupUnloadListener = () => {
     if (activeState) {
       const { beforePage, lastPageTime } = activeState;
       const dwellTime = Date.now() - lastPageTime;
-      lazyReport("pageChange", {
+      lazyReport("unload", {
         previous_url: beforePage,
-        current_url: window.location.href,
+        // current_url: window.location.href,
         dwell_time: dwellTime,
-        event_type: "unload"
       });
     }
   });
@@ -32,9 +31,9 @@ const reportPageChange = (currentUrl: string) => {
   const { beforePage, lastPageTime } = activeState;
   const dwellTime = Date.now() - lastPageTime;
   
-  lazyReport("pageChange", {
+  lazyReport("page_jump", {
     previous_url: beforePage,
-    current_url: currentUrl,
+    // current_url: currentUrl,
     dwell_time: dwellTime
   });
 
@@ -51,9 +50,8 @@ const initRouterState = () => {
   };
   setupUnloadListener();
   // 初始上报
-  lazyReport("pageChange", {
+  lazyReport("page_jump", {
     previous_url: '',
-    current_url: window.location.href,
     dwell_time: 0
   });
 };
