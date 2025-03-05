@@ -1,6 +1,11 @@
--- 删除表（如果存在）
+-- 创建数据库（如果不存在）
+CREATE DATABASE IF NOT EXISTS track_point_test;
+-- 使用数据库
+USE track_point_test;
+
 
 -- 事件表（存储埋点事件基本信息）
+-- 删除表（如果存在）
 DROP TABLE IF EXISTS events;
 CREATE TABLE events (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,  -- 事件ID
