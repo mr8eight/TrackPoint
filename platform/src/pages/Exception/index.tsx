@@ -3,7 +3,6 @@ import { ExclamationCircleOutlined, SearchOutlined } from "@ant-design/icons";
 import type { TableProps } from "antd";
 import { useState, useEffect } from "react";
 import axios from "axios";
-import MockAdapter from "axios-mock-adapter";
 import { PanelFilter, SelectFilter } from "@/commons/Filter";
 import type { PanelFilterItems } from "@/commons/Filter";
 import { urlOptions, errorOptions } from "@/data";
@@ -94,33 +93,12 @@ const items: PanelFilterItems[] = [
   {
     label: "url选择：",
     name: "urls",
-    item: (
-      <SelectFilter
-        options={[
-          { label: '首页', value: '/home' }, // 首页
-          { label: '登录页', value: '/login' }, // 登录页
-          { label: '注册页', value: '/register' }, // 注册页
-          { label: '商品页', value: '/product' }, // 商品页
-          { label: '商品详情页', value: '/product/' } // 商品详情页
-        ]}
-      />
-    ),
+    item: <SelectFilter options={urlOptions} />,
   },
   {
     label: "异常类型选择：",
     name: "types",
-    item: (
-      <SelectFilter
-        options={[
-          { label: 'js错误', value: 'js错误' },
-          { label: 'promise错误', value: 'promise错误' },
-          { label: '资源加载错误', value: '资源加载错误' },
-          { label: '手动捕获错误', value: '手动捕获错误' },
-          { label: '接口请求超时', value: '接口请求超时' },
-          { label: '接口错误', value: '接口错误' }
-        ]}
-      />
-    ),
+    item: <SelectFilter options={errorOptions} />,
     button: {
       type: "submit",
       item: (
@@ -149,14 +127,17 @@ const Exception = () => {
     try {
       const requestParams = {
         ...params,
-        urls: params.urls?.join(','),
-        types: params.types?.join(','),
-        startTime: params.startTime || '2025-02-15 00:00:00',
-        endTime: params.endTime || '2025-02-15 23:59:59',
+        urls: params.urls?.join(","),
+        types: params.types?.join(","),
+        startTime: params.startTime || "2025-02-15 00:00:00",
+        endTime: params.endTime || "2025-02-15 23:59:59",
         page: pagination.current,
-        pageSize: pagination.pageSize
+        pageSize: pagination.pageSize,
       };
-      const { data } = await axios.post("/tracking/errorMonitor", requestParams);
+      const { data } = await axios.post(
+        "/tracking/errorMonitor",
+        requestParams
+      );
       setData(data.data.list);
       message.success(data.message);
     } catch (error) {
@@ -168,7 +149,7 @@ const Exception = () => {
   const handleTableChange = (pag: any) => {
     setPagination({
       current: pag.current,
-      pageSize: pag.pageSize
+      pageSize: pag.pageSize,
     });
   };
 
@@ -203,8 +184,8 @@ const Exception = () => {
           current: pagination.current,
           pageSize: pagination.pageSize,
           showSizeChanger: true,
-          pageSizeOptions: ['1', '2', '3'],
-          showTotal: total => `共 ${total} 条`
+          pageSizeOptions: ["1", "2", "3"],
+          showTotal: (total) => `共 ${total} 条`,
         }}
         onChange={handleTableChange}
         locale={{
