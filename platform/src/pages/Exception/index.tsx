@@ -87,11 +87,13 @@ const items: PanelFilterItems[] = [
 const Exception = () => {
   const [data, setData] = useState<DataType[]>();
   const [reqData, setReqData] = useState<Record<string, any>>({
-    current: 1,
+    page: 1,
     pageSize: 10,
+    total: 50,
   });
 
   const fetchErrors = async (params: any) => {
+    setReqData(params);
     try {
       const { data } = await axios.post(
         "http://localhost:3000/tracking/errorMonitor",
@@ -111,12 +113,11 @@ const Exception = () => {
   };
 
   const handleTableChange = async (pag: any) => {
-    setReqData({
-      ...reqData,
+    const newReqData = Object.assign({}, reqData, {
       page: pag.current,
       pageSize: pag.pageSize,
     });
-    await fetchErrors(reqData);
+    await fetchErrors(newReqData);
   };
 
   const onSubmit = async (values: any) => {
@@ -131,17 +132,19 @@ const Exception = () => {
       msg.push("请选择异常类型！");
     }
 
-    // 无论是否通过验证都更新 filters 状态
-    setReqData({
-      ...reqData,
-      ...msg,
-    });
-    await fetchErrors(reqData);
     if (msg.length > 0) {
       // 使用延时确保消息顺序显示
       msg.forEach((messageText, index) => {
-        setTimeout(() => message.error(messageText), index * 100);
+        message.error(messageText);
       });
+    } else {
+      const newReqData = Object.assign({}, reqData, {
+        startTime: values.date.startTime,
+        endTime: values.date.endTime,
+        urls: values.urls,
+        types: values.types,
+      });
+      await fetchErrors(newReqData);
     }
   };
   return (
@@ -158,6 +161,7 @@ const Exception = () => {
         pagination={{
           current: reqData.page,
           pageSize: reqData.pageSize,
+          total: reqData.total,
         }}
         onChange={handleTableChange}
         locale={{
