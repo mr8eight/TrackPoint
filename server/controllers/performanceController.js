@@ -4,7 +4,7 @@ const {TrackingData, TrackingAttributes} = require('../models/TrackingData.js');
 
 async function getPerformanceData(req, res) {
     // 将req.query改为req.body
-    const { startTime, endTime, url } = req.body;
+    const { startTime, endTime, urls='' } = req.body;
     
     // 验证时间范围
     if (!startTime || !endTime) {
@@ -48,8 +48,15 @@ async function getPerformanceData(req, res) {
             [Op.between]: [start, end]
         }
     };
-    if (url) {
-        where.current_url = url;
+            
+    // 如果传了urls参数，添加模糊匹配条件
+    if (urls && urls.length > 0) {
+        const urlList = urls ? urls.split(',') : [];
+        where.current_url = {
+            [Op.or]: urlList.map(url => ({
+                [Op.like]: `%${url}%`
+            }))
+        };
     }
 
     try {

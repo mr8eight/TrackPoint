@@ -6,7 +6,12 @@ yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
 .pnpm-debug.log*
+# 忽略 package-lock.json
+package-lock.json
 
+# 忽略编辑器配置文件
+.vscode/
+.idea/
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 
