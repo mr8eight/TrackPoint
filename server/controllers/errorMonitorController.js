@@ -56,6 +56,21 @@ async function getErrorMonitorData(req, res) {
             limit: parseInt(pageSize)
         });
 
+        //转换时间格式为YYYY-MM-DD HH:mm:ss
+        let handleTimeString = (time) => {
+            const date = new Date(time);
+            // 转换为本地时间字符串
+            return date.toLocaleString('zh-CN', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: false // 使用24小时制
+            }).replace(/\//g, '-'); // 将斜杠替换为横杠
+        }
+    
         // 处理查询结果
         const data = rows.map(row => {
             const errorType = row.TrackingAttributes.find(attr => attr.attribute_id === 12)?.attribute_value || '';
@@ -64,6 +79,7 @@ async function getErrorMonitorData(req, res) {
             return {
                 id: row.id,
                 url: row.current_url,
+                time: handleTimeString(row.event_time),
                 type: errorType,
                 message: errorMessage
             };
