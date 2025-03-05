@@ -218,6 +218,7 @@ export function report(data: LogParams): void {
             const blob = new Blob([jsonData], { 
                 type: 'application/json; charset=UTF-8' 
             });
+            console.log(123123123);
             navigator.sendBeacon(url, blob);
         } else { 
             let oImage = new Image();

@@ -19,7 +19,26 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
 // 使用 CORS 中间件
-app.use(cors());
+// // 启用 CORS
+// app.use(cors({
+//   origin: 'http://localhost:3001', // 允许的源
+//   methods: ['GET', 'POST', 'PUT', 'DELETE'], // 允许的 HTTP 方法
+//   allowedHeaders: ['Content-Type', 'Authorization'] // 允许的请求头
+// }));
+const allowedOrigins = ['http://localhost:3001']; // 替换为实际前端地址
+app.use(cors({
+  origin: (origin, callback) => {
+    if (allowedOrigins.includes(origin) || !origin) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  credentials: true
+}));
+app.options('*', cors()); // 显式处理 OPTIONS
 // 前置中间件
 app.use(logger('dev'));
 app.use(express.json());
