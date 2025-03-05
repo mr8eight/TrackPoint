@@ -18,7 +18,8 @@ init({
     errorReport: true, // Enable error monitoring
     blankReport: true, // Enable blank page monitoring
     pvReport: true, // Enable PV monitoring
-    uvReport: true // Enable UV monitoring
+    uvReport: true, // Enable UV monitoring
+    webVitalsReport:true
 });
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
