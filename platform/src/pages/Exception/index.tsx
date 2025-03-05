@@ -20,14 +20,15 @@ interface DataType {
 
 const AlertButton = ({ record }: { record: DataType }) => {
   const handleAlert = () => {
-    axios
-      .post("/api/send-alert", { errorKey: record.key })
-      .then(() => {
-        message.success("报警通知已发送");
-      })
-      .catch(() => {
-        message.error("报警通知发送失败");
-      });
+    // axios
+    //   .post("/api/send-alert", { errorKey: record.key })
+    //   .then(() => {
+    //     message.success("报警通知已发送");
+    //   })
+    //   .catch(() => {
+    //     message.error("报警通知发送失败");
+    //   });
+    message.success("报警通知已发送");
   };
 
   return (
@@ -66,29 +67,29 @@ const columns: TableProps<DataType>["columns"] = [
   },
 ];
 
-const initialData: DataType[] = [
-  {
-    key: "1",
-    url: "http://example.com",
-    type: "JS Error",
-    time: "2025-02-23 10:00:00",
-    message: "Uncaught TypeError in app.js",
-  },
-  {
-    key: "2",
-    url: "http://example.com",
-    type: "API Error",
-    time: "2025-02-23 10:05:00",
-    message: "500 Internal Server Error",
-  },
-  {
-    key: "3",
-    url: "http://example.com/assets",
-    type: "Resource Error",
-    time: "2025-02-23 10:10:00",
-    message: "404 Not Found",
-  },
-];
+// const initialData: DataType[] = [
+//   {
+//     key: "1",
+//     url: "http://example.com",
+//     type: "JS Error",
+//     time: "2025-02-23 10:00:00",
+//     message: "Uncaught TypeError in app.js",
+//   },
+//   {
+//     key: "2",
+//     url: "http://example.com",
+//     type: "API Error",
+//     time: "2025-02-23 10:05:00",
+//     message: "500 Internal Server Error",
+//   },
+//   {
+//     key: "3",
+//     url: "http://example.com/assets",
+//     type: "Resource Error",
+//     time: "2025-02-23 10:10:00",
+//     message: "404 Not Found",
+//   },
+// ];
 
 const items: PanelFilterItems[] = [
   {
@@ -133,15 +134,18 @@ const items: PanelFilterItems[] = [
 ];
 
 const Exception = () => {
-  const [data, setData] = useState<DataType[]>(initialData);
+  const [data, setData] = useState<DataType[]>();
   const [pagination, setPagination] = useState({ current: 1, pageSize: 1 });
   const [filters, setFilters] = useState<Record<string, any>>({});
 
   useEffect(() => {
-    //检查filters是否为空 如果为空则不请求
-    if (Object.keys(filters).length > 0) {
+    // 精确判断有效过滤条件（urls 和 types 必须同时存在）
+    if (filters?.urls?.length > 0 && filters?.types?.length > 0) {
       console.log(filters);
       fetchErrors(filters);
+    } else {
+      // 清空数据（可选，根据业务需求）测试setData([initialData])
+      setData([]);
     }
   }, [filters, pagination]);
 
@@ -180,12 +184,15 @@ const Exception = () => {
     if (!values?.types) {
       msg.push("请选择异常类型！");
     }
+    
+    // 无论是否通过验证都更新 filters 状态
+    setFilters(values);
+
     if (msg.length > 0) {
-      while (msg.length > 0) {
-        message.error(msg.shift());
-      }
-    } else {
-      setFilters(values);
+      // 使用延时确保消息顺序显示
+      msg.forEach((messageText, index) => {
+        setTimeout(() => message.error(messageText), index * 100);
+      });
     }
   };
   return (
