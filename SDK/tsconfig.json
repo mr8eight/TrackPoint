@@ -1,14 +1,16 @@
 {
     "compilerOptions": {
-        "target": "ES6",
+        "target": "ES2017",
         "module": "commonjs",
         "strict": true,
         "esModuleInterop": true,
         "skipLibCheck": true,
         "forceConsistentCasingInFileNames": true,
+        "declaration": true,
         "outDir": "./dist",
         "rootDir": "./src",
-        "lib": ["ESNext", "DOM"] // 添加 lib 选项，包含 ESNext 和 DOM 标准库
+        "lib": ["ES2017", "DOM"]
     },
-    "include": ["src/**/*.ts"]
+    "include": ["src/**/*.ts"],
+    "exclude": ["dist"]
 }

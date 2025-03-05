@@ -18,10 +18,10 @@
         
     
         //防止卸载时还有剩余的埋点数据没发送
-        window.addEventListener('unload', () => {
-            const data = getCache();
-            report(data);
-        });
+        // window.addEventListener('unload', () => {
+        //     const data = getCache();
+        //     report(data);
+        // });
     }
 
     // 导出

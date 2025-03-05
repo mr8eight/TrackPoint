@@ -5,10 +5,9 @@ import { lazyReport } from './report';
 /**
  * 手动上报
  */
-export function tracker(actionType: string , data: string) : void  {
-  lazyReport('action', {
-    actionType,
-    data
+export function tracker(actionType: string) : void  {
+  lazyReport('button_click', {
+    button_type: actionType
   });
 }
 
@@ -31,9 +30,8 @@ export function autoTrackerReport() : void {
     }
 
     if (target) {
-      lazyReport('action', {
-        actionType: 'click',
-        data: target
+      lazyReport('button_click', {
+        button_type: target
       });
     } 
     // else {
