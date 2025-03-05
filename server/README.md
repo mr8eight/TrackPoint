@@ -39,6 +39,7 @@ npm install
 使用Navicat等数据工具，按下列文件的顺序运行sql 脚本，初始化数据库。数据库初始化脚本位于 `schema/` 目录下。
 + schema.sql
 + indexes.sql
++ init_events_table.sql
 + init_data.sql
 + visual_data.sql
 
