@@ -15,7 +15,7 @@ function observePaintTime(metricName: 'FP' | 'FCP', entryName: string) {
   const observer = new PerformanceObserver(list => {
     const entry = list.getEntriesByName(entryName)[0];
     if (entry) {
-      lazyReport(metricName, { value: entry.startTime });
+      lazyReport('performance_monitor', { metricName: entry.startTime });
       observer.disconnect();
     }
   });
@@ -30,7 +30,7 @@ function observeLCPTime() {
     list.getEntries().forEach(entry => {
       if (entry.startTime > maxLcp) {
         maxLcp = entry.startTime;
-        lazyReport('LCP', { value: maxLcp });
+        lazyReport('performance_monitor', { 'LCP': maxLcp });
       }
     });
   });
@@ -58,7 +58,7 @@ function observeCLSValue() {
   // 最终上报 CLS 值
   window.addEventListener('beforeunload', () => {
     if (clsValue > 0) {
-      lazyReport('CLS', { value: Number(clsValue.toFixed(4)) });
+      lazyReport('performance_monitor', { 'CLS': Number(clsValue.toFixed(4)) });
     }
   });
 }

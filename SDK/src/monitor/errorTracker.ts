@@ -7,10 +7,11 @@ export function errorTrackerReport() : void {
   // --------  js error ---------
  // 监听 js 错误
 window.onerror = (msg, url, line, column, error) => {
-  lazyReport("js错误",{
-      message: msg,
-      row: line,
-      column: column,
+  lazyReport("error_monitor",{
+      error_message: msg,
+      // row: line,
+      // column: column,
+      error_type: 'js错误'
   })
 }
 
@@ -20,9 +21,9 @@ window.onerror = (msg, url, line, column, error) => {
     const error = event.reason;
     
     try {
-      lazyReport("promise错误", {
-        error: (error === null || error === void 0 ? void 0 : error.stack) || error.toString(),
-        subType: 'promise',
+      lazyReport("error_monitor", {
+        error_type: 'promise',
+        error_message: (error === null || error === void 0 ? void 0 : error.stack) || error.toString(),
       });
     } catch (e) {
       // 防止上报逻辑自身出错导致死循环
