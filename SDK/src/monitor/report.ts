@@ -197,37 +197,40 @@ export function lazyReport(type: string, params: ReportParams): void {
     let logParamsString = JSON.stringify(logParams);
 
     if (delay === 0) {
-        report([logParams]); // 改为直接传递对象数组
+        report(logParams); // 直接传递对象
         return;
     }
 
     clearTimeout(timer);
     timer = setTimeout(() => {
-        report([logParams]); // 改为直接传递对象数组
+        report(logParams); // 直接传递对象
     }, delay) as unknown as number;
 }
 
-export function report(data: LogParams[]): void { // 修改入参类型
+
+export function report(data: LogParams): void { // 修改入参为单个对象
     try {
         const url = window._report_url_;
-
-        console.log('report 函数开始执行');
-        const jsonData = JSON.stringify(data);
-        const curlCommandBeacon = `curl -X POST -H "Content-Type: application/json" -d '${jsonData}' "${url}"`;
-        const curlCommandImage = `curl "${url}?logs=${data.join(',')}"`;
-
-        console.log('Beacon curl command:', curlCommandBeacon);
-        console.log('Image curl command:', curlCommandImage);
+        const jsonData = JSON.stringify(data); // 序列化单个对象
         
-        // 修改点：正确序列化数据
+        // 修复 curl 命令（移除数组操作）
+        const curlCommandBeacon = `curl -X POST -H "Content-Type: application/json" -d '${jsonData}' "${url}"`;
+        const curlCommandImage = `curl "${url}?logs=${encodeURIComponent(jsonData)}"`;
+
+        // console.log('Beacon curl command:', curlCommandBeacon);
+        // console.log('Image curl command:', curlCommandImage);
+
         if (navigator.sendBeacon) { 
-            navigator.sendBeacon(url, JSON.stringify(data));
+            navigator.sendBeacon(url, jsonData); 
+            console.log('Beacon curl command:', curlCommandBeacon);
         } else { 
             let oImage = new Image();
-            oImage.src = `${url}?logs=${encodeURIComponent(JSON.stringify(data))}`;
+            oImage.src = `${url}?logs=${encodeURIComponent(jsonData)}`;
+            console.log('Image curl command:', curlCommandImage);
         }
 
-        clearCache();
+        // 清除缓存（如果不需要批量上报）
+        // clearCache(); 
     } catch (error) {
         console.error('report 函数执行出错:', error);
     }
