@@ -1,6 +1,6 @@
 const { Sequelize } = require('sequelize');
 
-const sequelize = new Sequelize('track_point', 'root', 'xx', {
+const sequelize = new Sequelize('track_point', 'root', 'xxx', {
     host: 'localhost',
     dialect: 'mysql', // 根据你的数据库类型修改
     timezone: '+08:00', // 设置为东八区

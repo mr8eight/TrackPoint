@@ -16,7 +16,7 @@ import { tracker } from 'sdk';
 
 const initButton = () => {
     return (
-        <button data-target="注册按键">注册</button>
+        <button data-target="点击注册按钮">注册</button>
     );
 };
 
