@@ -35,6 +35,7 @@ export const urlOptions = [
   { label: "注册页", value: "/register" },
   { label: "商品页", value: "/product" },
   { label: "商品详情页", value: "/product/" },
+  { label: "仪表盘", value: "/dashboard" },
 ];
 
 export const errorOptions = [

@@ -3,7 +3,7 @@ import { ExclamationCircleOutlined, SearchOutlined } from "@ant-design/icons";
 import type { TableProps } from "antd";
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { PanelFilter, SelectFilter, DateFilter } from "@/commons/Filter";
+import { DateFilter, PanelFilter, SelectFilter } from "@/commons/Filter";
 import type { PanelFilterItems } from "@/commons/Filter";
 import { urlOptions, errorOptions } from "@/data";
 
@@ -19,6 +19,14 @@ interface DataType {
 
 const AlertButton = ({ record }: { record: DataType }) => {
   const handleAlert = () => {
+    // axios
+    //   .post("/api/send-alert", { errorKey: record.key })
+    //   .then(() => {
+    //     message.success("报警通知已发送");
+    //   })
+    //   .catch(() => {
+    //     message.error("报警通知发送失败");
+    //   });
     message.success("报警通知已发送");
   };
 
@@ -58,6 +66,30 @@ const columns: TableProps<DataType>["columns"] = [
   },
 ];
 
+// const initialData: DataType[] = [
+//   {
+//     key: "1",
+//     url: "http://example.com",
+//     type: "JS Error",
+//     time: "2025-02-23 10:00:00",
+//     message: "Uncaught TypeError in app.js",
+//   },
+//   {
+//     key: "2",
+//     url: "http://example.com",
+//     type: "API Error",
+//     time: "2025-02-23 10:05:00",
+//     message: "500 Internal Server Error",
+//   },
+//   {
+//     key: "3",
+//     url: "http://example.com/assets",
+//     type: "Resource Error",
+//     time: "2025-02-23 10:10:00",
+//     message: "404 Not Found",
+//   },
+// ];
+
 const items: PanelFilterItems[] = [
   {
     label: "日期选择：",
@@ -67,12 +99,33 @@ const items: PanelFilterItems[] = [
   {
     label: "url选择：",
     name: "urls",
-    item: <SelectFilter options={urlOptions} />,
+    item: (
+      <SelectFilter
+        options={[
+          { label: "首页", value: "/home" }, // 首页
+          { label: "登录页", value: "/login" }, // 登录页
+          { label: "注册页", value: "/register" }, // 注册页
+          { label: "商品页", value: "/product" }, // 商品页
+          { label: "商品详情页", value: "/product/" }, // 商品详情页
+        ]}
+      />
+    ),
   },
   {
     label: "异常类型选择：",
     name: "types",
-    item: <SelectFilter options={errorOptions} />,
+    item: (
+      <SelectFilter
+        options={[
+          { label: "js错误", value: "js错误" },
+          { label: "promise错误", value: "promise错误" },
+          { label: "资源加载错误", value: "资源加载错误" },
+          { label: "手动捕获错误", value: "手动捕获错误" },
+          { label: "接口请求超时", value: "接口请求超时" },
+          { label: "接口错误", value: "接口错误" },
+        ]}
+      />
+    ),
     button: {
       type: "submit",
       item: (
@@ -86,16 +139,34 @@ const items: PanelFilterItems[] = [
 
 const Exception = () => {
   const [data, setData] = useState<DataType[]>();
-  const [reqData, setReqData] = useState<Record<string, any>>({
-    current: 1,
-    pageSize: 10,
-  });
+  const [total, setTotal] = useState(0);
+  const [pagination, setPagination] = useState({ current: 1, pageSize: 10 });
+  const [filters, setFilters] = useState<Record<string, any>>({});
+
+  useEffect(() => {
+    // 精确判断有效过滤条件（urls 和 types 必须同时存在）
+    if (filters?.urls?.length > 0 && filters?.types?.length > 0) {
+      console.log(filters);
+      fetchErrors(filters);
+    } else {
+      // 清空数据（可选，根据业务需求）测试setData([initialData])
+      setData([]);
+    }
+  }, [filters, pagination]);
 
   const fetchErrors = async (params: any) => {
     try {
+      const requestParams = {
+        urls: params.urls,
+        types: params.types,
+        startTime: params.date?.startTime || "2025-02-15 00:00:00",
+        endTime: params.date?.endTime || "2025-02-15 23:59:59",
+        page: pagination.current,
+        pageSize: pagination.pageSize,
+      };
       const { data } = await axios.post(
         "http://localhost:3000/tracking/errorMonitor",
-        params,
+        requestParams,
         {
           headers: {
             "Content-Type": "application/json",
@@ -103,6 +174,7 @@ const Exception = () => {
         }
       );
       setData(data.data.list);
+      setTotal(data.data.total);
       message.success(data.message);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -110,20 +182,15 @@ const Exception = () => {
     }
   };
 
-  const handleTableChange = async (pag: any) => {
-    setReqData({
-      ...reqData,
-      page: pag.current,
+  const handleTableChange = (pag: any) => {
+    setPagination({
+      current: pag.current,
       pageSize: pag.pageSize,
     });
-    await fetchErrors(reqData);
   };
 
-  const onSubmit = async (values: any) => {
+  const onSubmit = (values: any) => {
     const msg = [];
-    if (!values?.date) {
-      msg.push("请选择日期！");
-    }
     if (!values?.urls) {
       msg.push("请选择url！");
     }
@@ -132,11 +199,8 @@ const Exception = () => {
     }
 
     // 无论是否通过验证都更新 filters 状态
-    setReqData({
-      ...reqData,
-      ...msg,
-    });
-    await fetchErrors(reqData);
+    setFilters(values);
+
     if (msg.length > 0) {
       // 使用延时确保消息顺序显示
       msg.forEach((messageText, index) => {
@@ -156,8 +220,11 @@ const Exception = () => {
         bordered
         scroll={{ x: true }}
         pagination={{
-          current: reqData.page,
-          pageSize: reqData.pageSize,
+          current: pagination.current,
+          pageSize: pagination.pageSize,
+          showSizeChanger: true,
+          total: total,
+          showTotal: (total) => `共 ${total} 条`,
         }}
         onChange={handleTableChange}
         locale={{
