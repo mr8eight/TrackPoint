@@ -139,7 +139,8 @@ const items: PanelFilterItems[] = [
 
 const Exception = () => {
   const [data, setData] = useState<DataType[]>();
-  const [pagination, setPagination] = useState({ current: 1, pageSize: 1 });
+  const [total, setTotal] = useState(0);
+  const [pagination, setPagination] = useState({ current: 1, pageSize: 10 });
   const [filters, setFilters] = useState<Record<string, any>>({});
 
   useEffect(() => {
@@ -173,6 +174,7 @@ const Exception = () => {
         }
       );
       setData(data.data.list);
+      setTotal(data.data.total);
       message.success(data.message);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -221,7 +223,7 @@ const Exception = () => {
           current: pagination.current,
           pageSize: pagination.pageSize,
           showSizeChanger: true,
-          pageSizeOptions: ["1", "2", "3"],
+          total: total,
           showTotal: (total) => `共 ${total} 条`,
         }}
         onChange={handleTableChange}
